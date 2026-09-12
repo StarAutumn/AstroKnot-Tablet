@@ -1,0 +1,11 @@
+{
+  "appId": "com.astroknot.tablet",
+  "appName": "AstroKnot",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": true
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

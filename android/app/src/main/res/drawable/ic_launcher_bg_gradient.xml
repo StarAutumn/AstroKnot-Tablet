@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 蓝灰渐变：左上浅蓝灰 → 右下深蓝灰（配合深空主题 UI） -->
+    <gradient
+        android:type="linear"
+        android:angle="315"
+        android:startColor="#58B5FF"
+        android:endColor="#0B4551" />
+</shape>

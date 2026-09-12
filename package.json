@@ -1,0 +1,21 @@
+{
+  "name": "astroknot-tablet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AstroKnot 平板版（桌面 Web 渲染层 + Capacitor 壳）",
+  "scripts": {
+    "sync-web": "node scripts/sync-web.mjs",
+    "dev": "npx -y http-server www -p 5176 -c-1",
+    "sync": "npm run sync-web && npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/app": "^6.0.3",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/filesystem": "^6.0.2",
+    "@capacitor/preferences": "^6.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  }
+}
