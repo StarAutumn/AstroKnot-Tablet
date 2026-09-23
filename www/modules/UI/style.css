@@ -1,0 +1,28 @@
+/* ============================================================
+   UI 模块样式入口
+   按模块拆分，CSS与对应JS文件同目录
+   ============================================================ */
+
+/* 全局动画、浅色模式（对应 Theme.js） */
+@import './Theme.css';
+
+/* 通用样式（对应 shared.js） */
+@import './shared.css';
+
+/* 搜索功能（对应 Search.js） */
+@import './Search.css';
+
+/* 任务栏、菜单、项目管理面板（对应 Toolbar.js） */
+@import './Toolbar.css';
+
+/* 窗口动画、设置、快速笔记编辑器（对应 Window.js, window-manager.js） */
+@import './Window.css';
+
+/* 左侧悬浮 Dock 面板（对应 Dock.js） */
+@import './Dock.css';
+
+/* AI 对话浮窗（对应 AiDialog.js） */
+@import './AiDialog.css';
+
+/* 时钟日历弹出框（对应 calendar/*.js） */
+@import '../calendar/calendar.css';

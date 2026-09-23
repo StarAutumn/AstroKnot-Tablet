@@ -1,0 +1,269 @@
+import { appState } from '../module0_AppState.js';
+import { createNewProject, loadProject, renderProjectList, saveCurrentProjectData } from '../module2_TreeData.js';
+import { buildSceneFromTree } from '../VisualComponents/index.js';
+import { showToast } from '../module5_SelectAndEdit.js';
+import { applyLoadedData } from '../module9_FileIO.js';
+import * as THREE from 'three';
+
+let isStartPageVisible = false;
+let dateTimeTimer = null;
+
+// 更新开始首页的日期时间显示
+function updateStartPageDateTime() {
+    const el = document.getElementById('startPageDateTime');
+    if (!el) return;
+    const now = new Date();
+    const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    const pad = (n) => String(n).padStart(2, '0');
+    el.textContent = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${weekDays[now.getDay()]} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+}
+
+// 应用开始页面背景（ribbon 飘带 / custom 本地图片）
+export function applyStartPageBackground() {
+    const startPage = document.getElementById('startPage');
+    if (!startPage) return;
+
+    const ribbonsEl = startPage.querySelector('.start-page-ribbons');
+    const customBgEl = document.getElementById('startPageCustomBg');
+    const beforePseudo = startPage; // ::before/::after 通过 CSS 类控制
+
+    const mode = appState.startPageBackground || 'ribbon';
+
+    if (mode === 'custom' && appState.customBgPath) {
+        // 显示自定义背景，隐藏飘带和渐变动画
+        if (ribbonsEl) ribbonsEl.style.display = 'none';
+        if (customBgEl) {
+            // Windows 路径需要转换为 file:// URL
+            const filePath = appState.customBgPath.replace(/\\/g, '/');
+            const fileUrl = 'file:///' + encodeURI(filePath).replace(/#/g, '%23');
+            customBgEl.style.backgroundImage = `url("${fileUrl}")`;
+            customBgEl.style.display = 'block';
+        }
+        // 隐藏 CSS 伪元素渐变动画
+        startPage.classList.add('custom-bg-mode');
+    } else {
+        // 显示飘带和渐变动画，隐藏自定义背景
+        if (ribbonsEl) ribbonsEl.style.display = '';
+        if (customBgEl) {
+            customBgEl.style.display = 'none';
+            customBgEl.style.backgroundImage = '';
+        }
+        startPage.classList.remove('custom-bg-mode');
+    }
+}
+
+// 监听设置变化事件（实时切换背景）
+document.addEventListener('start-page-bg-change', () => {
+    applyStartPageBackground();
+});
+
+export function showStartPage(withSlideDown = false) {
+    const startPage = document.getElementById('startPage');
+    if (!startPage) return;
+    
+    // 应用背景设置
+    applyStartPageBackground();
+    
+    // 重置动画状态
+    startPage.classList.remove('slide-up-exit');
+    
+    if (withSlideDown) {
+        // 从下方滑入入场动画
+        startPage.classList.add('slide-down-enter');
+        startPage.style.display = 'flex';
+        
+        // 动画结束后移除动画类
+        startPage.addEventListener('animationend', function handler(e) {
+            if (e.animationName === 'slideDownEnter') {
+                startPage.removeEventListener('animationend', handler);
+                startPage.classList.remove('slide-down-enter');
+            }
+        });
+    } else {
+        startPage.style.display = 'flex';
+    }
+    
+    isStartPageVisible = true;
+
+    // 启动日期时间更新
+    updateStartPageDateTime();
+    if (dateTimeTimer) clearInterval(dateTimeTimer);
+    dateTimeTimer = setInterval(updateStartPageDateTime, 1000);
+
+    renderRecentProjects();
+    bindStartPageEvents();
+}
+
+// 监听磁盘项目列表加载完成事件，刷新开始首页
+window.addEventListener('astroknot-projects-loaded', () => {
+    if (isStartPageVisible) {
+        renderRecentProjects();
+    }
+});
+
+export function hideStartPage() {
+    const startPage = document.getElementById('startPage');
+    if (!startPage) return;
+
+    // 清除日期时间定时器
+    if (dateTimeTimer) {
+        clearInterval(dateTimeTimer);
+        dateTimeTimer = null;
+    }
+    
+    // 添加向上滑动动画
+    startPage.classList.add('slide-up-exit');
+    
+    // 动画结束后真正隐藏
+    startPage.addEventListener('transitionend', function handler(e) {
+        if (e.propertyName === 'transform' || e.propertyName === 'opacity') {
+            startPage.removeEventListener('transitionend', handler);
+            startPage.style.display = 'none';
+            startPage.classList.remove('slide-up-exit');
+            isStartPageVisible = false;
+        }
+    });
+}
+
+export function toggleStartPage() {
+    if (isStartPageVisible) {
+        hideStartPage();
+    } else {
+        showStartPage();
+    }
+}
+
+function renderRecentProjects() {
+    const listContainer = document.getElementById('recentProjectsList');
+    if (!listContainer) return;
+    
+    listContainer.innerHTML = '';
+    
+    const projects = appState.projects || [];
+    
+    if (projects.length === 0) {
+        listContainer.innerHTML = '<div class="start-page-empty">暂无项目，点击上方按钮创建新项目</div>';
+        return;
+    }
+    
+    projects.forEach(proj => {
+        const item = document.createElement('div');
+        item.className = 'recent-project-item';
+        
+        const meta = proj.folderPath 
+            ? proj.folderPath.split(/[\\/]/).pop()
+            : '未保存';
+        
+        item.innerHTML = `
+            <div class="recent-project-info">
+                <div class="recent-project-name">${escapeHtml(proj.name)}</div>
+                <div class="recent-project-meta">${meta}</div>
+            </div>
+            <button class="recent-project-open" data-project-id="${proj.id}">打开</button>
+        `;
+        
+        const openBtn = item.querySelector('.recent-project-open');
+        openBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openProject(proj.id);
+        });
+        
+        item.addEventListener('click', () => {
+            openProject(proj.id);
+        });
+        
+        listContainer.appendChild(item);
+    });
+}
+
+function bindStartPageEvents() {
+    const newProjectBtn = document.getElementById('startPageNewProject');
+    const openProjectBtn = document.getElementById('startPageOpenProject');
+    const closeBtn = document.getElementById('startPageClose');
+    
+    // [tablet-trim] 平板隐藏「打开项目」按钮（依赖 Electron 文件夹选择器）
+    if (window.__TABLET__ && openProjectBtn) {
+      openProjectBtn.style.display = 'none';
+    }
+    if (newProjectBtn && !newProjectBtn.hasAttribute('data-bound')) {
+        newProjectBtn.setAttribute('data-bound', 'true');
+        newProjectBtn.addEventListener('click', () => {
+            createNewProject('新项目');
+            hideStartPage();
+            renderProjectList();
+        });
+    }
+    
+    if (openProjectBtn && !openProjectBtn.hasAttribute('data-bound')) {
+        openProjectBtn.setAttribute('data-bound', 'true');
+        openProjectBtn.addEventListener('click', () => {
+            if (window.__ELECTRON__) {
+                window.api.loadProject().then(result => {
+                    if (result.canceled) {
+                        return;
+                    }
+
+                    if (result.success) {
+                        applyLoadedData(result.data, result.folderName || 'knowledge_graph', result.folderPath);
+                        hideStartPage();
+                        renderProjectList();
+                        showToast('已加载：' + (result.folderName || 'knowledge_graph'));
+                    } else {
+                        showToast('加载失败: ' + (result.error || '未知错误'));
+                    }
+                }).catch(err => {
+                    showToast('加载失败: ' + err.message);
+                });
+            } else {
+                console.warn('Web版暂不支持打开外部项目文件');
+            }
+        });
+    }
+
+    // 关闭按钮 - 退出应用
+    if (closeBtn && !closeBtn.hasAttribute('data-bound')) {
+        closeBtn.setAttribute('data-bound', 'true');
+        closeBtn.addEventListener('click', () => {
+            // [tablet-trim] 平板退出走 @capacitor/app 原生 exitApp（finishAffinity；原 StoragePerm 为误写的自定义插件名，实际不存在）
+            const capExit = window.__TABLET__ && window.Capacitor?.Plugins?.App;
+            if (capExit?.exitApp) { capExit.exitApp(); return; }
+            if (window.api?.closeApp) {
+                window.api.closeApp();
+            }
+        });
+    }
+}
+
+function openProject(projectId) {
+    const proj = appState.projects.find(p => p.id === projectId);
+    if (!proj) return;
+    
+    // 如果项目数据未加载（从磁盘扫描的轻量条目），先从磁盘加载
+    if (!proj.data) {
+        // 通过 IPC 从磁盘读取项目数据
+        window.api?.loadProjectFromFolder?.(proj.folderPath).then(result => {
+            if (result && result.success) {
+                import('../module9_FileIO.js').then(({ applyLoadedData }) => {
+                    applyLoadedData(result.data, proj.name, proj.folderPath);
+                    hideStartPage();
+                    renderProjectList();
+                });
+            } else {
+                showToast('加载项目失败: ' + (result?.error || '未知错误'));
+            }
+        }).catch(err => {
+            showToast('加载项目失败: ' + err.message);
+        });
+        return;
+    }
+    
+    hideStartPage();
+    loadProject(projectId);
+    renderProjectList();
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}

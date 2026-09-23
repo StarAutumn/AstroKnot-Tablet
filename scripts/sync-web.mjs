@@ -10,13 +10,14 @@
 //
 // 输出: www/（可直接 npx cap sync）
 // 注入: modules/systemStorage.js + js/tablet-boot.js（web-api-shim.js 之前加载）
-// 用法: node scripts/sync-web.mjs [桌面根目录，默认 d:/AstroKnot]
+// 用法: node scripts/sync-web.mjs [桌面根目录，默认 ../AstroKnot（并排 clone），退回 d:/AstroKnot]
+//       平板仓库自带 www/ 构建产物：独立 clone 后无需桌面版，直接 npx cap sync android；
+//       本脚本仅在改补丁/桌面源码更新后重新生成 www/ 时需要
 // ============================================================
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const DESKTOP = path.resolve(process.argv[2] || 'd:/AstroKnot');
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WWW = path.join(ROOT, 'www');
 const PATCHES = path.join(ROOT, 'patches');
@@ -24,9 +25,34 @@ const PATCHES = path.join(ROOT, 'patches');
 function log(msg) { console.log('[sync-web] ' + msg); }
 function fail(msg) { console.error('[sync-web] ✗ ' + msg); process.exit(1); }
 
-if (!fs.existsSync(DESKTOP)) fail('桌面版目录不存在: ' + DESKTOP);
-for (const need of ['web_version/index.html', 'web_version/AstroKnot.js', 'web-api-shim.js', 'modules', 'style']) {
-  if (!fs.existsSync(path.join(DESKTOP, need))) fail('桌面版缺少 ' + need);
+// 桌面版定位：命令行参数 > ../AstroKnot（并排 clone）> d:/AstroKnot（本机开发默认）
+let DESKTOP = process.argv[2] || null;
+if (!DESKTOP) {
+  const sibling = path.resolve(ROOT, '..', 'AstroKnot');
+  DESKTOP = fs.existsSync(sibling) ? sibling : 'd:/AstroKnot';
+}
+DESKTOP = path.resolve(DESKTOP);
+
+// 桌面版校验：平板仓库现已自带 www/ 构建产物（独立 clone 可直接 cap sync 构建），
+// 桌面源码仅在重新生成 www/ 时需要；桌面版不可用且 www/ 完好时降级为警告跳过
+function desktopErrText() {
+  if (!fs.existsSync(DESKTOP)) return '目录不存在';
+  for (const need of ['web_version/index.html', 'web_version/AstroKnot.js', 'web-api-shim.js', 'modules', 'style']) {
+    if (!fs.existsSync(path.join(DESKTOP, need))) return '缺少 ' + need;
+  }
+  return null;
+}
+{
+  const err = desktopErrText();
+  if (err) {
+    const wwwReady = fs.existsSync(path.join(WWW, 'index.html')) && fs.existsSync(path.join(WWW, 'AstroKnot.js'));
+    if (wwwReady) {
+      log('⚠ 桌面版不可用（' + DESKTOP + '：' + err + '），跳过重新生成，直接使用仓库内已有 www/');
+      log('  独立部署: npx cap sync android → cd android && gradlew installDebug');
+      process.exit(0);
+    }
+    fail('桌面版不可用（' + DESKTOP + '：' + err + '）且 www/ 无构建产物，无法继续');
+  }
 }
 
 // ---------- 工具 ----------
