@@ -374,6 +374,8 @@ animate();
 
 // ── 新手引导：首次启动自动弹出 ──
 startGuideIfNeeded();
+// [tablet-trim] 平板启用版本自动提交：监听 astroknot-project-saved 事件自动 commit（web 精简入口原本无此初始化）
+import('./modules/versionGraph/versionAutoSave.js').then(function (m) { m.initVersionAutoSave(); });
 
 // ── 启动闪屏：首帧渲染完成后渐变消失 ──
 // [tablet-trim] 平板：startPage 要等文件层预载 + 动态 import 才显示（远慢于双帧 rAF），

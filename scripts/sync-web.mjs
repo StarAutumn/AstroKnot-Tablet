@@ -571,6 +571,37 @@ const TRIM_PATCHES = [
       "    },",
     ].join('\n'),
   },
+  {
+    file: 'AstroKnot.js',
+    desc: '平板启用版本时间线自动提交（initVersionAutoSave 仅桌面完整入口 AstroKnot.js:129 调用，web 精简入口缺失 → 保存事件无人监听，时间线不产生节点）',
+    from: [
+      '// ── 新手引导：首次启动自动弹出 ──',
+      'startGuideIfNeeded();',
+    ].join('\n'),
+    to: [
+      '// ── 新手引导：首次启动自动弹出 ──',
+      'startGuideIfNeeded();',
+      "// [tablet-trim] 平板启用版本自动提交：监听 astroknot-project-saved 事件自动 commit（web 精简入口原本无此初始化）",
+      "import('./modules/versionGraph/versionAutoSave.js').then(function (m) { m.initVersionAutoSave(); });",
+    ].join('\n'),
+  },
+  {
+    file: 'web-api-shim.js',
+    desc: 'saveProject 返回 path 置空（原 download/<名>.astroknot 被 module9:328 写进 folderPath，污染版本图 versionKey 导致时间线失灵；folderPath 交 project-fs-shim doSaveAll 维护为 projects/<名>；备份下载行为保留）',
+    from: "        return { success: true, path: 'download/' + safeName + '.astroknot' };",
+    to: [
+      "        // [tablet-trim] path 置空：原返回 download/<名>.astroknot 会被 module9 写进 folderPath，",
+      "        // versionKey=folderPath 随之错位（数据在 projects/<名>/.versiongraph 而读 download/...）→ 时间线失灵。",
+      "        // folderPath 由 project-fs-shim doSaveAll 维护为 projects/<名>；.astroknot 备份下载行为保留",
+      "        return { success: true, path: null };",
+    ].join('\n'),
+  },
+  {
+    file: 'modules/module9_FileIO.js',
+    desc: '保存成功 toast 兜底（saveProject path 置空后避免显示「项目已保存到: null」）',
+    from: '      showToast(`项目已保存到: ${result.path}`);',
+    to: "      showToast(`项目已保存到: ${result.path || '本地（.astroknot 备份已下载）'}`); // [tablet-trim] path 置空后兜底",
+  },
   // ── 项目文件化存储（fs-boot/fs-core/system-storage-fs/project-fs-shim 配套） ──
   {
     file: 'modules/module2_TreeData.js',

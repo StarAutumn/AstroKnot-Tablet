@@ -108,7 +108,10 @@
         downloadFile(jsonStr, safeName + '.astroknot', 'application/json');
 
         console.log('[shim] 项目已保存并下载:', projectId);
-        return { success: true, path: 'download/' + safeName + '.astroknot' };
+        // [tablet-trim] path 置空：原返回 download/<名>.astroknot 会被 module9 写进 folderPath，
+        // versionKey=folderPath 随之错位（数据在 projects/<名>/.versiongraph 而读 download/...）→ 时间线失灵。
+        // folderPath 由 project-fs-shim doSaveAll 维护为 projects/<名>；.astroknot 备份下载行为保留
+        return { success: true, path: null };
       } catch (e) {
         console.error('[shim] 保存失败:', e);
         return { success: false, error: e.message };
