@@ -3,3 +3,6 @@ android/app/build/
 android/.gradle/
 android/local.properties
 *.log
+# CDP 调试取证残留（LevelDB/WAL dump 等）不进仓库
+scripts/tests/*.bin
+scripts/tests/*.log.*
