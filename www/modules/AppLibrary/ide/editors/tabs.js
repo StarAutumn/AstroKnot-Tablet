@@ -1,6 +1,6 @@
 // ============================================================
 //  sandbox-tabs.js — 文件标签页组件
-//  VSCode 风格的文件标签页：可关闭、可拖拽排序、脏标记、右键菜单
+//  VSCode 风格的文件标签页：可关闭、可拖拽排序、脏标记、长按菜单
 // ============================================================
 
 import { getFileIconSVG } from '../core/file-icons.js';
@@ -10,7 +10,7 @@ export class FileTabsComponent {
    * @param {HTMLElement} containerEl - 标签页容器
    * @param {Function} onTabSelect - 切换标签回调 (filePath)
    * @param {Function} onTabClose - 关闭标签回调 (filePath)
-   * @param {Object} [contextMenuCallbacks] - 右键菜单回调
+   * @param {Object} [contextMenuCallbacks] - 长按菜单回调
    * @param {Function} [contextMenuCallbacks.onCloseOthers] - 关闭其他标签
    * @param {Function} [contextMenuCallbacks.onCloseAll] - 关闭所有标签
    * @param {Function} [contextMenuCallbacks.onCloseSaved] - 关闭已保存标签
@@ -32,7 +32,7 @@ export class FileTabsComponent {
     this._dragIdx = -1;
     this._lastTargetIdx = -1;
 
-    // 右键菜单 DOM（单例）
+    // 长按菜单 DOM（单例）
     this._ctxMenu = null;
 
     this._init();
@@ -42,7 +42,7 @@ export class FileTabsComponent {
     this._container.classList.add('sandbox-file-tabs');
     this._container.innerHTML = '';
 
-    // 创建右键菜单（单例，所有标签共享）
+    // 创建长按菜单（单例，所有标签共享）
     this._ctxMenu = document.createElement('div');
     this._ctxMenu.className = 'sandbox-tab-ctx-menu';
     this._ctxMenu.style.cssText = 'position:fixed;z-index:50000;display:none;flex-direction:column;gap:1px;min-width:180px;background:#0d1f2b;border:1px solid #2c6e7e;border-radius:8px;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,0.5);font-size:12px;font-family:system-ui,sans-serif;';
@@ -290,7 +290,7 @@ export class FileTabsComponent {
         }
       });
 
-      // 右键菜单
+      // 长按菜单
       el.addEventListener('contextmenu', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -324,7 +324,7 @@ export class FileTabsComponent {
     return getFileIconSVG(name);
   }
 
-  // ── 右键菜单 ──
+  // ── 长按菜单 ──
 
   _showContextMenu(x, y, filePath) {
     const menu = this._ctxMenu;

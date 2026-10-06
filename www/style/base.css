@@ -154,7 +154,6 @@ body.light-mode .three-scene-canvas {
 /* ═══ 浅色模式：标题栏/任务栏/面包屑二次反转 + 浅蓝色背景 ═══ */
 body.light-mode .rich-modal-header,
 body.light-mode #settingsPopup .settings-header,
-body.light-mode #aiFloatingDialog .ai-drag-header,
 body.light-mode #astroKnotMenu,
 body.light-mode #taskbar,
 body.light-mode #appTitleBar,
@@ -166,7 +165,6 @@ body.light-mode #editorBreadcrumb {
 /* 标题栏/任务栏文字也需要二次反转后设深色 */
 body.light-mode .rich-modal-header *,
 body.light-mode #settingsPopup .settings-header *,
-body.light-mode #aiFloatingDialog .ai-drag-header *,
 body.light-mode #astroKnotMenu *,
 body.light-mode #taskbar *,
 body.light-mode #appTitleBar *,
@@ -222,7 +220,7 @@ body.light-mode #appTitleBar.no-rainbow::before {
 }
 
 /* ============================================================
-   自定义标题栏（无边框窗口 + 自定义按钮 + 右键菜单）
+   自定义标题栏（无边框窗口 + 自定义按钮 + 长按菜单）
    ============================================================ */
 #appTitleBar {
     position: fixed;
@@ -372,7 +370,7 @@ body.light-mode #appTitleBar.no-rainbow::before {
     background: #4CAF50;
 }
 
-/* 标题栏右键菜单 */
+/* 标题栏长按菜单 */
 .titlebar-context-menu {
     position: fixed;
     /* 标题栏相关元素必须始终在最顶层 */
@@ -481,7 +479,6 @@ body.hide-ui .help-modal,
 body.hide-ui #formulaEditorModal,
 body.hide-ui .layer-panel,
 body.hide-ui #layerIconBtn,
-body.hide-ui #aiFloatingDialog,
 body.hide-ui #nodeContextMenu,
 body.hide-ui #blankContextMenu,
 body.hide-ui #moveControlBar,
@@ -495,7 +492,6 @@ body.hide-ui .global-search-dropdown,
 body.hide-ui .search-dropdown,
 body.hide-ui #lineTooltip,
 body.hide-ui #excelEditorModal,
-body.hide-ui #slideshowEditorModal,
 body.hide-ui #olyEditorModal,
 body.hide-ui #olyAudioEditorModal,
 body.hide-ui .ve-overlay,

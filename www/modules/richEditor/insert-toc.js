@@ -1,5 +1,5 @@
 // ============================================================
-// insert-toc.js — 右键将选中文字添加到右侧目录栏
+// insert-toc.js — 长按将选中文字添加到右侧目录栏
 // ============================================================
 
 import { renumberAllHeadings } from './lists.js';
@@ -7,7 +7,7 @@ import { getStylesForLevel } from './heading-templates.js';
 
 let _ctxMenuEl = null;
 
-// ─── 右键菜单 ───
+// ─── 长按菜单 ───
 
 export function showTocContextMenu(editor, x, y) {
   hideTocContextMenu();
@@ -85,7 +85,7 @@ export function showTocContextMenu(editor, x, y) {
           addToToc(editor, selText, level);
         }
       } else if (action === 'renumber') {
-        renumberAllHeadings(editor);
+        renumberAllHeadings(editor, true);  // 手动触发：强制编号（可为从未编号的文档启用）并进撤销栈
       }
     });
   });

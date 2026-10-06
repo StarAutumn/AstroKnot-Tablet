@@ -5,9 +5,9 @@
 // ============================================================
 
 import { appState } from './module0_AppState.js';
-import { escapeHtml, hideItemContextMenu, showItemContextMenu, saveCurrentProjectData } from './module2_TreeData.js';
+import { escapeHtml, hideItemContextMenu, showItemContextMenu, saveCurrentProjectData } from './TreeData/index.js';
 import { showConfirm } from './module4_Confirm.js';
-import { showToast } from './module5_SelectAndEdit.js';
+import { showToast } from './SelectAndEdit/index.js';
 import { withHistory } from './module3_History.js';
 import { openRichEditorCK, initCKEditor } from './richEditor/index.js';
 
@@ -206,7 +206,7 @@ export function renderQuickNotesList() {
         `;
     }).join('');
 
-    // 右键菜单事件
+    // 长按菜单事件
     list.querySelectorAll('.quick-item').forEach(item => {
         item.addEventListener('contextmenu', function (e) {
             e.preventDefault();

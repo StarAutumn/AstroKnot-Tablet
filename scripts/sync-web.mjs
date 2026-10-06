@@ -161,8 +161,8 @@ const TRIM_PATCHES = [
     to: '      // [tablet-trim] 华丽模式已裁剪，F2 不再切换',
   },
   {
-    file: 'modules/UI/Toolbar/settings-popup.js',
     desc: '设置面板华丽开关置灰锁定',
+    file: 'modules/UI/Toolbar/settings-popup/tabs/display.js',
     from: '<input type="checkbox" id="simple3DCheck">',
     to: '<input type="checkbox" id="simple3DCheck" checked disabled>',
   },
@@ -173,14 +173,14 @@ const TRIM_PATCHES = [
     to: 'function _showF2Hint() { return; // [tablet-trim] 华丽模式已裁剪，无 F2 提示',
   },
   {
-    file: 'modules/module14_Animation.js',
     desc: '3D 主循环帧率锁 90 → 50（平板省电）',
+    file: 'modules/Animation/index.js',
     from: 'const _TARGET_INTERVAL = 1000 / 90;',
     to: 'const _TARGET_INTERVAL = 1000 / 50; // [tablet-trim] 平板锁 50fps',
   },
   {
-    file: 'modules/richEditor/tree-panel.js',
     desc: '树状面板帧率锁 90 → 50',
+    file: 'modules/richEditor/tree-panel/index.js',
     from: 'const _TARGET_INTERVAL = 1000 / 90;',
     to: 'const _TARGET_INTERVAL = 1000 / 50; // [tablet-trim] 平板锁 50fps',
   },
@@ -191,13 +191,13 @@ const TRIM_PATCHES = [
     to: 'appState.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0)); // [tablet-trim] 平板锁 1.0',
   },
   {
-    file: 'modules/Guide/GuideCore.js',
+    file: 'modules/Guide/GuideCore/index.js',
     desc: '教程完成标记换键名（旧键 astroknot_guide_completed_v1.0.0 在平板 WebView DOM Storage 中损坏：写入后重启必丢，新键空间实测可正常持久化）',
     from: "const GUIDE_BASE_KEY = 'astroknot_guide_completed';",
     to: "const GUIDE_BASE_KEY = 'astroknot_guide_done'; // [tablet-trim] 绕开平板 WebView 损坏的旧键",
   },
   {
-    file: 'modules/Guide/GuideCore.js',
+    file: 'modules/Guide/GuideCore/index.js',
     desc: '教程步骤标记换键名（与 completed 同批损坏区）',
     from: "const GUIDE_STEP_BASE_KEY = 'astroknot_guide_current_step';",
     to: "const GUIDE_STEP_BASE_KEY = 'astroknot_guide_step2'; // [tablet-trim] 绕开平板 WebView 损坏的旧键",
@@ -227,8 +227,8 @@ const TRIM_PATCHES = [
     to: "async function _doSaveQuickNotes() {\n  const isElectron = typeof window !== 'undefined' && (window.__ELECTRON__ || (window.__TABLET__ && window.api && window.api.loadQuickNotes)) && window.api; // [tablet-trim] 平板启用文件层快速笔记",
   },
   {
-    file: 'modules/UI/Toolbar/settings-popup.js',
     desc: '隐藏平板无效的设置控件（华丽特效/渲染锁定项/Electron 专属）',
+    file: 'modules/UI/Toolbar/settings-popup/index.js',
     from: '  <div class="settings-body" style="flex:1; overflow-y:auto;">',
     to: [
       '  <style>',
@@ -257,6 +257,39 @@ const TRIM_PATCHES = [
       '  </style>',
       '  <div class="settings-body" style="flex:1; overflow-y:auto;">',
     ].join('\n'),
+  },
+  // ── 入口 import 路径迁移（桌面大文件拆分后 module2/5/14 已变为目录，旧路径在 www/ 下 404，
+  //    整个 ESM 模块图加载失败 → 初始化不执行 → 闪屏永不消失）──
+  {
+    file: 'AstroKnot.js',
+    desc: '入口 import 迁移：module2_TreeData.js → TreeData/index.js（桌面拆分后旧路径 404）',
+    from: "import { initProjects } from './modules/module2_TreeData.js';",
+    to: "import { initProjects } from './modules/TreeData/index.js'; // [tablet-trim] 路径迁移：module2_TreeData.js 已拆分为 TreeData/",
+  },
+  {
+    file: 'AstroKnot.js',
+    desc: '入口 import 迁移：module5_SelectAndEdit.js → SelectAndEdit/index.js',
+    from: "} from './modules/module5_SelectAndEdit.js';",
+    to: "} from './modules/SelectAndEdit/index.js'; // [tablet-trim] 路径迁移：module5_SelectAndEdit.js 已拆分为 SelectAndEdit/",
+  },
+  {
+    file: 'AstroKnot.js',
+    desc: '入口 import 迁移：module14_Animation.js → Animation/index.js',
+    from: "import { animate } from './modules/module14_Animation.js';",
+    to: "import { animate } from './modules/Animation/index.js'; // [tablet-trim] 路径迁移：module14_Animation.js 已拆分为 Animation/",
+  },
+  // ── 鱼骨图对齐（桌面完整入口 AstroKnot.js 调用 initFishbone()，web 精简入口缺失）──
+  {
+    file: 'AstroKnot.js',
+    desc: '入口补挂鱼骨图模块 import（桌面完整入口有此 import，web 精简入口缺失）',
+    from: "import { initMoveMode } from './modules/MoveMode/index.js';",
+    to: "import { initMoveMode } from './modules/MoveMode/index.js';\nimport { initFishbone } from './modules/Fishbone/index.js'; // [tablet-trim] 补挂鱼骨图模块",
+  },
+  {
+    file: 'AstroKnot.js',
+    desc: '鱼骨图初始化调用（与桌面完整入口同序：initMoveMode() 之后）',
+    from: 'initMoveMode();',
+    to: 'initMoveMode();\ninitFishbone(); // [tablet-trim] 平板补齐桌面鱼骨图初始化',
   },
   {
     file: 'AstroKnot.js',
@@ -604,7 +637,7 @@ const TRIM_PATCHES = [
   },
   // ── 项目文件化存储（fs-boot/fs-core/system-storage-fs/project-fs-shim 配套） ──
   {
-    file: 'modules/module2_TreeData.js',
+    file: 'modules/TreeData/web-mode.js',
     desc: '项目持久化切文件层：projects/<项目名>/project.json（桌面同构布局）',
     from: [
       'function _persistToLocalStorage() {',
@@ -621,7 +654,7 @@ const TRIM_PATCHES = [
     ].join('\n'),
   },
   {
-    file: 'modules/module2_TreeData.js',
+    file: 'modules/TreeData/web-mode.js',
     desc: '项目恢复切文件层：预载清单序列化进 localStorage 同款解析链路（复用 Vector3/Set/Map 类型重建）',
     from: '    const raw = localStorage.getItem(_WEB_PROJECTS_KEY);',
     to: [
@@ -632,7 +665,7 @@ const TRIM_PATCHES = [
     ].join('\n'),
   },
   {
-    file: 'modules/module2_TreeData.js',
+    file: 'modules/TreeData/project-crud.js',
     desc: '软删除走文件回收站（fs-boot 失败时会摘除该接口自动回退 localStorage）',
     from: '        if (window.__ELECTRON__ && window.api?.moveProjectToTrash) {',
     to: '        if ((window.__ELECTRON__ || window.__TABLET__) && window.api?.moveProjectToTrash) { // [tablet-trim] 平板放行文件回收站',
@@ -744,7 +777,7 @@ const TRIM_PATCHES = [
   // （2026-09-12）浏览器窗口化回归桌面路径：AppRunner.js 不再拦截 browser 分支，
   // BrowserApp 走 WindowManager 窗口原样复用（webview-shim.js 把 <webview> 换成 iframe 适配器）
   {
-    file: 'modules/Guide/GuideCore.js',
+    file: 'modules/Guide/GuideCore/steps.js',
     desc: '新手引导平板触控化：步骤文案覆写（鼠标/键盘→长按/捏合/摇杆）+ 摇杆键盘事件桥（window→document，否则 keyboardNav 步骤检测器收不到合成键）',
     from: [
       "    type: 'modal',",
@@ -850,7 +883,7 @@ const TRIM_PATCHES = [
     ].join('\n'),
   },
   {
-    file: 'modules/Guide/GuideCore.js',
+    file: 'modules/Guide/GuideCore/detection.js',
     desc: '教程「2D 自动排列」检测补强：布局已是树状时排列不改位置（changedCount 恒 <3 卡步），点击排列菜单项即视为完成',
     from: [
       "      case 'autoArrange2D': {",
@@ -916,7 +949,7 @@ const TRIM_PATCHES = [
     ].join('\n'),
   },
   {
-    file: 'modules/Guide/GuideCore.js',
+    file: 'modules/Guide/GuideCore/detection.js',
     desc: '教程「3D 按 2D 排列」检测补强：3D 布局已与 2D 一致时同样不改位置会卡步，点击排列菜单项即视为完成',
     from: [
       "      case 'arrange3D2D': {",
@@ -985,7 +1018,7 @@ const TRIM_PATCHES = [
   // ── 慢双击重命名全量移除（触摸屏 300-1500ms 双击间隔极易误触）──
   // 重命名仍可走：2D card 铅笔按钮 / 右键菜单 / 树面板内联编辑；桌面端不受影响
   {
-    file: 'modules/2DView/interaction/mouse-events.js',
+    file: 'modules/2DView/interaction/double-click-rename.js',
     desc: '移除 2D 节点慢双击重命名',
     from: "if (!isCard && appState.selectedNodeIds.has(hit.id) && _last2DClickedId === hit.id",
     to: "if (false && !isCard && appState.selectedNodeIds.has(hit.id) && _last2DClickedId === hit.id // [tablet-trim] 慢双击重命名已移除（触摸误触）",
@@ -997,7 +1030,7 @@ const TRIM_PATCHES = [
     to: "if (false && appState.selectedNodeIds.has(nodeId) && _lastLabelClickId === nodeId // [tablet-trim] 慢双击重命名已移除（触摸误触）",
   },
   {
-    file: 'modules/module2_TreeData.js',
+    file: 'modules/TreeData/project-ui.js',
     desc: '移除项目列表慢双击重命名',
     from: "if (appState.currentProjectId === id && _lastProjectClickId === id",
     to: "if (false && appState.currentProjectId === id && _lastProjectClickId === id // [tablet-trim] 慢双击重命名已移除（触摸误触）",
@@ -1127,6 +1160,62 @@ html = html.replace(moduleAnchor,
   '    ' + moduleAnchor);
 const indexPath = path.join(WWW, 'index.html');
 fs.writeFileSync(indexPath, html);
+
+// ---------- 3.5 平板文案适配：触屏无鼠标，提示文案改触控说法 ----------
+// 仅作用于 www/（modules/ + style/ + 入口 JS + 合成 index.html），桌面源码保持不动。
+// 排除 www/js（平板触控 shim 的开发注释，保留「长按=右键菜单」映射描述）与 www/lib（vendored）。
+// 已验证：应用源码无任何以「右键/左键」字面量做比较/查找的逻辑（教程检测走 DOM 事件不走文案），统一替换安全。
+// 「左键」按语义分类：拖拽类→「按住拖拽」，点击类→去「左键」直接「点击/单击」，其余兜底→「点按」。
+log('平板文案适配：提示「右键/左键」→ 触控说法 …');
+{
+  // 规则按序应用（长词组在前，防止部分覆盖产生病句）
+  const RULES = [
+    // 右键 → 长按
+    ['右键', '长按'],
+    // 左键：拖拽类
+    ['鼠标左键长按拖拽', '按住拖拽'],   // 帮助面板：鼠标左键长按拖拽空白区域 → 旋转视角
+    ['按住鼠标左键', '按住屏幕'],       // 引导第1步：按住鼠标左键，在深色背景区域拖拽
+    ['拖拽左键', '拖拽'],               // 引导：拖拽左键 = 旋转视角
+    ['按住左键拖拽', '按住拖拽'],       // 引导：按住左键拖拽旋转/框选/移动节点
+    ['按住左键', '按住'],               // 鱼骨/思维导图：按住左键从一点拖到另一点、按住左键拖出矩形
+    // 左键：点击类
+    ['左键双击', '双击'],               // 帮助面板：左键双击节点进入编辑器
+    ['左键单击', '单击'],               // 帮助面板：左键单击刷新天气
+    ['左键点击', '点击'],               // 帮助面板/引导：左键点击目标节点/图层名称/连线标签
+    ['Ctrl+左键多选', '框选多选'],       // 帮助面板：跨图层复制粘贴（触屏无 Ctrl）
+    ['左键点', '点'],                   // 引导 hint3D：左键点目标
+    // 兜底
+    ['左键', '点按'],                   // 图层总览提示「左键进入图层」等
+  ];
+  const walkText = (dir, out) => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) walkText(p, out);
+      else if (/\.(js|css|html)$/.test(e.name)) out.push(p);
+    }
+  };
+  const textTargets = [path.join(WWW, 'AstroKnot.js'), path.join(WWW, 'index.html')];
+  walkText(path.join(WWW, 'modules'), textTargets);
+  walkText(path.join(WWW, 'style'), textTargets);
+  let hitFiles = 0, hitCount = 0;
+  for (const f of textTargets) {
+    let src = fs.readFileSync(f, 'utf8');
+    let n = 0;
+    for (const [from, to] of RULES) {
+      const c = src.split(from).length - 1;
+      if (c) {
+        src = src.split(from).join(to);
+        n += c;
+      }
+    }
+    if (n) {
+      fs.writeFileSync(f, src);
+      hitFiles++; hitCount += n;
+    }
+  }
+  log('  ✓ ' + hitFiles + ' 个文件 ' + hitCount + ' 处触控化替换');
+}
 
 // ---------- 4. CDN 资源本地化 ----------
 // 4a. Univer 各 preset 的 index.css（web_version/lib/univer 缺失）

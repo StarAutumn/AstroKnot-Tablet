@@ -18,7 +18,7 @@ import { appState } from './modules/module0_AppState.js';
 import { createIrregularGlowTexture } from './modules/module1_Textures.js';
 
 // ---------- 模块2：数据结构&项目管理 ----------
-import { initProjects } from './modules/module2_TreeData.js';
+import { initProjects } from './modules/TreeData/index.js'; // [tablet-trim] 路径迁移：module2_TreeData.js 已拆分为 TreeData/
 
 // ---------- 模块3：历史记录 ----------
 import './modules/module3_History.js';
@@ -32,7 +32,7 @@ import {
   clearSelected, setSelectedNode, getPrimarySelectedId, updateSelectionUI,
   deleteSelectedNodes, addNode, renamePrimaryNode, addConnection, removeConnection,
   setAsSource, setAsTarget, toggleChildren
-} from './modules/module5_SelectAndEdit.js';
+} from './modules/SelectAndEdit/index.js'; // [tablet-trim] 路径迁移：module5_SelectAndEdit.js 已拆分为 SelectAndEdit/
 
 // ---------- 模块6：3D组件 ----------
 import {
@@ -44,7 +44,7 @@ import {
 import { initScene } from './modules/module7_SceneInit.js';
 initScene();
 
-// ---------- 模块8：右键菜单 ----------
+// ---------- 模块8：长按菜单 ----------
 import { bindContextMenuEvents } from './modules/module8_ContextMenu.js';
 
 // ---------- 模块9：文件IO ----------
@@ -60,7 +60,7 @@ import { initQuickNotes } from './modules/module11_QuickNotes.js';
 import {
   bindUndoRedo, bindMinimizePanel, bindHelpModal, bindFullscreenAndTab,
   bindToolbarButtons, bindResize, bindSearch,
-  bindKeyboardMovement, bindGlobalSearch, initUITheme, initAIFloatingDialog, initTaskbarClock, bindZoomToggle
+  bindKeyboardMovement, bindGlobalSearch, initUITheme, initTaskbarClock, bindZoomToggle
 } from './modules/UI/index.js';
 
 // ---------- 任务栏（多进程管理） ----------
@@ -68,12 +68,10 @@ import './modules/taskbar.js';
 
 // ---------- 模块13：移动模式 ----------
 import { initMoveMode } from './modules/MoveMode/index.js';
+import { initFishbone } from './modules/Fishbone/index.js'; // [tablet-trim] 补挂鱼骨图模块
 
 // ---------- 模块14：动画循环 ----------
-import { animate } from './modules/module14_Animation.js';
-
-// ---------- 模块15：AI 对话框 ----------
-import { initAIChat } from './modules/AIChat/index.js';
+import { animate } from './modules/Animation/index.js'; // [tablet-trim] 路径迁移：module14_Animation.js 已拆分为 Animation/
 
 // ---------- 模块16：2D 思维导图视图 ----------
 import { init2DView, toggle2DView } from './modules/2DView/index.js';
@@ -95,9 +93,9 @@ import { initGuide, startGuideIfNeeded } from './modules/Guide/index.js';
 // ============================================================
 initRichEditor();
 initQuickNotes();
-initAIChat(); 
 bindContextMenuEvents();
 initMoveMode();
+initFishbone(); // [tablet-trim] 平板补齐桌面鱼骨图初始化
 // [tablet-trim] 平板：index.html 门闩（TLA）在本 WebView 不阻塞后续 module 求值，
 // 显式等 __storageReady 后再恢复项目；恢复完成派发事件刷新开始首页最近项目列表
 if (window.__TABLET__ && window.__storageReady) {
@@ -132,7 +130,6 @@ bindKeyboardMovement();
 initDock();
 
 // ---------- 停靠面板 ----------
-initAIFloatingDialog();
 initTaskbarClock();
 bindZoomToggle();
 
@@ -339,7 +336,7 @@ document.getElementById('modeToggleBtn').addEventListener('click', toggle2DView)
     api.winMaximize();
   });
 
-  // 标题栏右键菜单
+  // 标题栏长按菜单
   const tbMenu = document.getElementById('titlebarContextMenu');
   const titleBar = document.getElementById('appTitleBar');
 

@@ -791,7 +791,7 @@
     min-width: 60px;
 }
 
-/* 文件树右键菜单 */
+/* 文件树长按菜单 */
 .file-tree-ctx-menu {
     position: fixed;
     background: #0d1f2b;

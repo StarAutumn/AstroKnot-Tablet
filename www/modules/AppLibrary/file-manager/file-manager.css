@@ -515,7 +515,7 @@
   flex-shrink: 0;
 }
 
-/* ── 右键菜单 ── */
+/* ── 长按菜单 ── */
 .fm-context-menu {
   position: fixed;
   z-index: 10002;

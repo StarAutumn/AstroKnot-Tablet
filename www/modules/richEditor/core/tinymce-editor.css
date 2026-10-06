@@ -685,17 +685,17 @@
     border-color: #fff;
 }
 
-/* ---------- 图片右键菜单 ---------- */
+/* ---------- 图片长按菜单 ---------- */
 #tmceImgContextMenu input[type="range"] {
     cursor: pointer;
 }
 
-/* ---------- 文件/链接右键菜单 ---------- */
+/* ---------- 文件/链接长按菜单 ---------- */
 #tmceFileLinkCtxMenu div:hover {
     background: #1a3a44;
 }
 
-/* ---------- 插入目录右键菜单 ---------- */
+/* ---------- 插入目录长按菜单 ---------- */
 #tmceTocCtxMenu {
     animation: tmceFadeIn 0.12s ease;
 }

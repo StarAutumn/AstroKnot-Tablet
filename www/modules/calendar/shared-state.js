@@ -24,7 +24,7 @@ export const state = {
   // 默认时段模板（清空或重置时使用）
   defaultSlots: ['08:00-09:40', '10:00-11:40', '14:00-15:40', '16:00-17:40', '19:00-20:40'],
 
-  // 表单/对话框/右键菜单的 DOM 引用（由 schedule-forms.js 创建并填充）
+  // 表单/对话框/长按菜单的 DOM 引用（由 schedule-forms.js 创建并填充）
   eventFormOverlay: null,
   slotMenu: null,
   slotTimeOverlay: null,

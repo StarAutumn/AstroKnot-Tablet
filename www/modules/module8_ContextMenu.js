@@ -1,12 +1,12 @@
 // ============================================================
-//  模块8：右键菜单与空白菜单（使用 appState）
+//  模块8：长按菜单与空白菜单（使用 appState）
 // ============================================================
 import { appState } from './module0_AppState.js';
-import { saveCurrentProjectData, renderProjectList } from './module2_TreeData.js';
+import { saveCurrentProjectData, renderProjectList } from './TreeData/index.js';
 import { updateNodeVisuals, addSingleTreeLine } from './VisualComponents/index.js';
 import { showPrompt, showConfirm } from './module4_Confirm.js';
 import { showLineTooltip, hideLineTooltip } from './MoveMode/LineTooltip.js';
-import { clearSelected, setSelectedNode, getPrimarySelectedId, updateSelectionUI, deleteSelectedNodes, toggleChildren, startAddConnectionMode, startRemoveConnectionMode, cancelConnectionMode, showToast } from './module5_SelectAndEdit.js';
+import { clearSelected, setSelectedNode, getPrimarySelectedId, updateSelectionUI, deleteSelectedNodes, toggleChildren, startAddConnectionMode, startRemoveConnectionMode, cancelConnectionMode, showToast } from './SelectAndEdit/index.js';
 import { withHistory, history } from './module3_History.js';
 import { activateSplitScreen } from './richEditor/content-io/index.js';
 import { removeCardOverlay, removeWebpageOverlay } from './2DView/interaction/index.js';
@@ -142,10 +142,10 @@ function _createCrossLayerItem(edge, nodeName, layerName, connectedNodeId, curre
   item.appendChild(nameSpan);
   item.appendChild(labelSpan);
 
-  // 左键 → 跳转定位
+  // 点按 → 跳转定位
   item.addEventListener('click', () => _navigateToCrossLayerNode(connectedNodeId));
 
-  // 右键 → 子菜单
+  // 长按 → 子菜单
   item.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -155,7 +155,7 @@ function _createCrossLayerItem(edge, nodeName, layerName, connectedNodeId, curre
   return item;
 }
 
-// ---------- 节点右键菜单 ----------
+// ---------- 节点长按菜单 ----------
 export function showContextMenu(x, y, nodeId) {
   const node = appState.nodeMap.get(nodeId);
   if (!node) return;
@@ -165,6 +165,14 @@ export function showContextMenu(x, y, nodeId) {
   document.getElementById('contextNodeName').style.display = 'inline';
   document.getElementById('contextRenameInput').style.display = 'none';
   document.getElementById('contextRenameInput').value = node.name;
+
+  // 恢复被「鱼骨线多选精简菜单」隐藏的节点行（安全幂等，单节点菜单永远显示全部行）
+  ['nodeSizeRow', 'ringSpeedRow', 'nodeShapeRow', 'node3DShapeRow',
+   'cardModeRow', 'connectionRow', 'folderRow', 'opsRow',
+   'resetNodeDefaultsBtn', 'contextRenameToggleBtn'].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = '';
+  });
 
   const sizeSlider = document.getElementById('nodeSizeSlider');
   sizeSlider.value = node.sizeScale || 1;
@@ -215,7 +223,7 @@ export function showContextMenu(x, y, nodeId) {
   contextMenu.style.top = top + 'px';
   contextMenu.style.visibility = 'visible';
 
-  // “变成根节点”按钮仅在非根节点的右键菜单出现，“变成子节点”按钮仅在根节点的右键菜单出现
+  // “变成根节点”按钮仅在非根节点的长按菜单出现，“变成子节点”按钮仅在根节点的长按菜单出现
   const isRoot = _isRootNode(nodeId);
   const convertRootRow = document.getElementById('convertRootRow');
   if (convertRootRow) convertRootRow.style.display = isRoot ? 'none' : 'flex';
@@ -570,12 +578,12 @@ export function bindContextMenuEvents() {
   });
 
   document.addEventListener('click', (e) => {
-    // 检查是否点击在其他模态框内，避免误关闭右键菜单
+    // 检查是否点击在其他模态框内，避免误关闭长按菜单
     const isInModal = e.target.closest('#customConfirmModal, #customPromptModal');
     const isInSubMenu = e.target.closest('#crossLayerSubMenu');
     const isInLineTooltip = e.target.closest('#lineTooltip');
     if (isInModal || isInSubMenu || isInLineTooltip) return;
-    // 如果连线标签框正在显示，不关闭右键菜单（hideContextMenu 会误关标签框）
+    // 如果连线标签框正在显示，不关闭长按菜单（hideContextMenu 会误关标签框）
     const lt = document.getElementById('lineTooltip');
     if (lt && lt.style.display === 'block') return;
     
@@ -584,6 +592,8 @@ export function bindContextMenuEvents() {
   });
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      // 移动模式（节点/鱼骨统一）：Esc = 取消还原（未激活时内部 no-op，继续走下方分支）
+      if (appState.exitMoveMode) appState.exitMoveMode(false);
       if (appState.connectionMode) {
         cancelConnectionMode();
         return;

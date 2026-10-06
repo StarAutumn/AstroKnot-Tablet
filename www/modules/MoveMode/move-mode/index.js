@@ -7,8 +7,8 @@
 //      node-factory.js              节点创建工厂（createNodeInProject / placeNode* / getNext*Name）
 //      clipboard.js                 复制粘贴（copy/paste + deepClone/pasteNodeTree）
 //      event-bindings/index.js      initMoveMode 主函数（编排 7 个子绑定）
-//      event-bindings/blank-context-menu.js   空白处右键菜单
-//      event-bindings/node-context-menu.js    节点右键菜单
+//      event-bindings/blank-context-menu.js   空白处长按菜单
+//      event-bindings/node-context-menu.js    节点长按菜单
 //      event-bindings/move-controls.js        移动控制栏 + 滑块
 //      event-bindings/connection-controls.js  连接模式 + 定位
 //      event-bindings/align-buttons.js        对齐 / 分组 / 分屏

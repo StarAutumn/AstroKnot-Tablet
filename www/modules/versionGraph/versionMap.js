@@ -304,18 +304,18 @@ export function renderVersionMapInto(container, graph, callbacks = {}) {
   if (!container) return;
   const { svg } = renderVersionMap(graph);
   container.innerHTML = svg;
-  // 绑定站点事件：左键 checkout，右键弹重命名菜单
+  // 绑定站点事件：点按 checkout，长按弹重命名菜单
   container.querySelectorAll('[data-commit-id]').forEach(el => {
     const cid = el.getAttribute('data-commit-id');
     if (!cid) return;
-    // 左键：checkout
+    // 点按：checkout
     if (callbacks.onCheckoutCommit) {
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         callbacks.onCheckoutCommit(cid);
       });
     }
-    // 右键：弹重命名菜单
+    // 长按：弹重命名菜单
     if (callbacks.onRenameCommit) {
       el.addEventListener('contextmenu', (e) => {
         e.preventDefault();
@@ -327,7 +327,7 @@ export function renderVersionMapInto(container, graph, callbacks = {}) {
 }
 
 /**
- * 显示右键重命名菜单
+ * 显示长按重命名菜单
  */
 function showRenameMenu(e, commitId, graph, onRename) {
   // 移除已有菜单

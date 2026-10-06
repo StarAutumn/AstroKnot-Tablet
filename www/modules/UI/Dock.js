@@ -1,7 +1,7 @@
 // ============================================================
 //  UI / Dock.js — 左边缘悬浮 Dock（外部程序快捷方式 + 文件拖拽）
 //  光标移到左边缘自动弹出，移出自动隐藏
-//  双击打开 / 单击选中 / Ctrl 多选 / 右键菜单适配多选
+//  双击打开 / 单击选中 / Ctrl 多选 / 长按菜单适配多选
 //  支持从外部拖拽文件放入：图片→overlay、音频→overlay、视频→overlay、可执行文件→快捷方式
 // ============================================================
 
@@ -42,14 +42,14 @@ function launchApp(filePath) {
   }
 }
 
-// ---- 右键菜单（适配多选） ----
+// ---- 长按菜单（适配多选） ----
 
 function showContextMenu(e, item) {
   e.preventDefault();
   e.stopPropagation();
   hideContextMenu();
 
-  // 右键点击的项目不在选中集合中 => 单选它
+  // 长按点击的项目不在选中集合中 => 单选它
   if (!selectedPaths.has(item.path)) {
     selectedPaths.clear();
     selectedPaths.add(item.path);
@@ -168,7 +168,7 @@ function removeItems(paths) {
 }
 
 /**
- * 开始内联重命名（慢双击或右键菜单触发）
+ * 开始内联重命名（慢双击或长按菜单触发）
  * @param {HTMLElement} el - dock 项 DOM 元素
  * @param {Object} item - dock 项数据 { path, name, ... }
  */
@@ -207,7 +207,7 @@ function _startInlineRename(el, item) {
 }
 
 /**
- * 右键菜单触发的重命名（找到对应 DOM 元素后调用内联重命名）
+ * 长按菜单触发的重命名（找到对应 DOM 元素后调用内联重命名）
  */
 function renameItem(targetPath) {
   // desktop 模式下从桌面图标层查找
@@ -508,7 +508,7 @@ function _bindDesktopExternalEvents() {
     launchApp(icon.dataset.path);
   });
 
-  // 右键菜单
+  // 长按菜单
   desktopLayer.addEventListener('contextmenu', (e) => {
     const icon = e.target.closest('.desktop-icon');
     if (!icon || icon.dataset.source !== 'external') return;

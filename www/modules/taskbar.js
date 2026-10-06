@@ -8,7 +8,7 @@ let _taskbarLastTarget = -1;
 let _tabCtxMenu = null;
 let _tabCtxMenuTarget = null;
 
-// 创建任务栏右键菜单（只创建一次）
+// 创建任务栏长按菜单（只创建一次）
 function _ensureCtxMenu() {
     if (_tabCtxMenu) return;
     _tabCtxMenu = document.createElement('div');
@@ -144,7 +144,7 @@ function _renderItems() {
                     t.close();
                 }
             });
-            // 右键菜单
+            // 长按菜单
             tabEl.addEventListener('contextmenu', function (e) {
                 e.preventDefault();
                 e.stopPropagation();

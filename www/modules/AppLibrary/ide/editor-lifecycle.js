@@ -312,7 +312,7 @@ export async function renderSandboxContent(container, nodeId) {
   container.appendChild(iframe);
 }
 
-// 挂载到 window，供右键菜单等非 ES module 代码调用
+// 挂载到 window，供长按菜单等非 ES module 代码调用
 window.openHtmlSandboxEditor = openHtmlSandboxEditor;
 window.closeHtmlSandboxEditor = closeHtmlSandboxEditor;
 window.isNodeSandbox = isNodeSandbox;

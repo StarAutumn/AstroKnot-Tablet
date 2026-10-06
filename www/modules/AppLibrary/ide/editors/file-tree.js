@@ -1,6 +1,6 @@
 // ============================================================
 //  sandbox-file-tree.js — 文件树 UI 组件
-//  左侧可交互的文件目录树，支持展开/折叠、右键菜单、内联重命名
+//  左侧可交互的文件目录树，支持展开/折叠、长按菜单、内联重命名
 // ============================================================
 
 import { extensionToLanguage } from '../core/virtual-fs.js';
@@ -62,7 +62,7 @@ export class FileTreeComponent {
     const body = document.createElement('div');
     body.className = 'file-tree-body';
 
-    // 空白区域右键菜单
+    // 空白区域长按菜单
     body.addEventListener('contextmenu', (e) => {
       // 只在点击空白区域时触发（不在文件/文件夹项上）
       if (e.target.closest('.tree-item') || e.target.closest('.tree-dir-wrapper')) return;
@@ -153,7 +153,7 @@ export class FileTreeComponent {
       this.refresh();
     });
 
-    // 右键菜单
+    // 长按菜单
     item.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -214,7 +214,7 @@ export class FileTreeComponent {
       this._startRename(filePath, item, depth);
     });
 
-    // 右键菜单
+    // 长按菜单
     item.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -228,7 +228,7 @@ export class FileTreeComponent {
     return getFileIconSVG(filePath);
   }
 
-  // ── 右键菜单 ──
+  // ── 长按菜单 ──
 
   _initContextMenu() {
     if (this._ctxMenu) return;
@@ -314,7 +314,7 @@ export class FileTreeComponent {
     }
   }
 
-  // ── 空白区域右键菜单 ──
+  // ── 空白区域长按菜单 ──
   _showBlankContextMenu(x, y) {
     const canPaste = !!this._clipboard;
     const pasteLabel = this._clipboard

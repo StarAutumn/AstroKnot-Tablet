@@ -199,7 +199,7 @@ try {
   }
 } catch {}
 
-// ── 右键菜单（手动定位） ──
+// ── 长按菜单（手动定位） ──
 const weatherCtxMenu = document.createElement('div');
 weatherCtxMenu.id = 'weatherCtxMenu';
 weatherCtxMenu.style.cssText = `
@@ -334,7 +334,7 @@ async function doSetLocation(city) {
   }
 }
 
-// 右键菜单点击处理
+// 长按菜单点击处理
 weatherCtxMenu.addEventListener('click', function (e) {
   const item = e.target.closest('.ctx-item');
   if (!item) return;
@@ -358,7 +358,7 @@ weatherCtxMenu.addEventListener('click', function (e) {
   }
 });
 
-// 点击其他地方隐藏右键菜单（排除菜单本身）
+// 点击其他地方隐藏长按菜单（排除菜单本身）
 document.addEventListener('click', function () {
   weatherCtxMenu.style.visibility = 'hidden';
 });

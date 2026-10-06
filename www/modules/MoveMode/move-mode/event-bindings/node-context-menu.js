@@ -1,13 +1,13 @@
 // ============================================================
 //  MoveMode / event-bindings / node-context-menu.js
-//  节点右键菜单：操作按钮（折叠/展开/删除/复制/移动）+ 添加子节点/下一步
+//  节点长按菜单：操作按钮（折叠/展开/删除/复制/移动）+ 添加子节点/下一步
 // ============================================================
 
 import { appState } from '../../../module0_AppState.js';
 import {
   expandAllNodes, deleteSelectedNodes,
   getPrimarySelectedId, showToast
-} from '../../../module5_SelectAndEdit.js';
+} from '../../../SelectAndEdit/index.js';
 import { hideContextMenu } from '../../../module8_ContextMenu.js';
 import { enterMoveMode } from '../move-core.js';
 import {
@@ -32,7 +32,7 @@ export function bindNodeContextMenu() {
   });
   document.getElementById('showNodeFolderBtn')?.addEventListener('click', async () => {
     if (!appState.contextTargetId || appState.contextTargetId === 'multi') {
-      showToast('请右键单个节点后操作');
+      showToast('请长按单个节点后操作');
       return;
     }
     if (!window.api || !window.api.showNodeFolder) {

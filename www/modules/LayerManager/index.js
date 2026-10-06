@@ -1,12 +1,12 @@
 // ============================================================
 //  LayerManager / index.js — 图层管理浮动面板
-//  负责图层列表渲染、拖拽排序、右键菜单、增删改
+//  负责图层列表渲染、拖拽排序、长按菜单、增删改
 //  面板可拖拽移动、点击按钮切换展开/折叠
 // ============================================================
 
 import { appState } from '../module0_AppState.js';
 import { showConfirm } from '../module4_Confirm.js';
-import { saveCurrentProjectData } from '../module2_TreeData.js';
+import { saveCurrentProjectData } from '../TreeData/index.js';
 import { arrange3DWith2DLayout, apply3DWith2DLayoutImmediate } from '../UI/Resize.js';
 import * as THREE from 'three';
 
@@ -61,7 +61,7 @@ export function initLayerManager() {
     }
   });
 
-  // 阻止浏览器默认右键菜单（总览内）
+  // 阻止浏览器默认长按菜单（总览内）
   document.getElementById('layerOverview')?.addEventListener('contextmenu', (e) => {
     e.preventDefault();
   });
@@ -72,7 +72,7 @@ export function initLayerManager() {
     closeOverview();
   });
 
-  // 关闭右键菜单
+  // 关闭长按菜单
   document.addEventListener('click', (e) => {
     const menu = document.getElementById('layerContextMenu');
     if (menu && menu.style.display !== 'none' && !menu.contains(e.target) && e.button !== 2) {
@@ -257,7 +257,7 @@ function toggleSpacingSlider() {
 function openOverview() {
   const overlay = document.getElementById('layerOverview');
   if (!overlay) return;
-  // 关闭可能还开着的右键菜单
+  // 关闭可能还开着的长按菜单
   const menu = document.getElementById('layerContextMenu');
   if (menu) menu.style.display = 'none';
   renderOverviewCards();
@@ -327,7 +327,7 @@ function renderOverviewCards() {
     row.appendChild(label);
     row.appendChild(card);
 
-    // 左键：进入图层（点卡或标签都生效）
+    // 点按：进入图层（点卡或标签都生效）
     const clickHandler = (e) => {
       e.stopPropagation();
       switchToLayer(layer.id);
@@ -336,7 +336,7 @@ function renderOverviewCards() {
     card.addEventListener('click', clickHandler);
     label.addEventListener('click', clickHandler);
 
-    // 右键菜单（整个行）
+    // 长按菜单（整个行）
     const contextHandler = (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -435,7 +435,7 @@ function renderOverviewCards() {
       });
       container.querySelectorAll('.layer-paper-row-gap').forEach(el => el.remove());
 
-      // 关闭右键菜单
+      // 关闭长按菜单
       const ctxMenu = document.getElementById('layerContextMenu');
       if (ctxMenu) ctxMenu.style.display = 'none';
 
@@ -494,7 +494,7 @@ export function renderLayerList() {
       _lastLayerClickTime = now;
     });
 
-    // 右键菜单
+    // 长按菜单
     item.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -610,7 +610,7 @@ function reorderLayers(fromIdx, toIdx) {
 }
 
 // ============================================================
-//  右键菜单
+//  长按菜单
 // ============================================================
 function showLayerContextMenu(x, y, layer) {
   const menu = document.getElementById('layerContextMenu');

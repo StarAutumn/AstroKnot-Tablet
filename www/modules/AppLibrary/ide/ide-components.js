@@ -313,7 +313,7 @@ export function _destroyIDEComponents() {
   const previewTab = document.querySelector('.sandbox-tab[data-preview-tab]');
   if (previewTab) previewTab.remove();
 
-  // 移除预览右键菜单
+  // 移除预览长按菜单
   const previewCtxMenu = document.getElementById('sandboxPreviewCtxMenu');
   if (previewCtxMenu) previewCtxMenu.remove();
 

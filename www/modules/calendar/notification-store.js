@@ -12,17 +12,17 @@
 //   倒计时（anniversary type=countdown）：提前 N 天（设置） + 当天
 //   纪念日/生日/节日（anniversary）：暂不支持定时通知
 // 仅在应用运行时触发；已发送的通知按 当日+类型+ID+种类 去重。
-// 倒班班次需通过右键菜单设置上班时间后才会提醒。
+// 倒班班次需通过长按菜单设置上班时间后才会提醒。
 
 import { state } from './shared-state.js';
 import { appState } from '../module0_AppState.js';
-import { getDayShifts, getShiftSchedule } from './shift-store.js';
-import { getShiftTypeById } from './shift-types-store.js';
+import { getDayShifts, getShiftSchedule } from './shift/shift-store.js';
+import { getShiftTypeById } from './shift/shift-types-store.js';
 import {
   getSchedule, getDayEvents, getMondayOf,
   getWeekNumber, isWeeklyActiveAtWeek, parseSlotRange, fmtDate
-} from './schedule-store.js';
-import { getItems, computeDisplay } from './anniversary-store.js';
+} from './schedule/schedule-store.js';
+import { getItems, computeDisplay } from './anniversary/anniversary-store.js';
 
 // ==================== 事项通知 ====================
 // 事项通知规则：

@@ -249,7 +249,7 @@ input:not([type="range"]):not([type="color"]):not([type="checkbox"]):not([type="
     opacity: 0.7;
 }
 
-/* 右键菜单 */
+/* 长按菜单 */
 #itemContextMenu {
     display: none;
     position: fixed;

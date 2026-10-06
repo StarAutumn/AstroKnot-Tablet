@@ -7,7 +7,7 @@ import { appState } from '../../../module0_AppState.js';
 import {
   renameToggleBtn, contextRenameInput, contextNodeNameSpan
 } from '../../shared.js';
-import { exitMoveMode, saveRenameAndRestore } from '../move-core.js';
+import { enterMoveMode, exitMoveMode, saveRenameAndRestore } from '../move-core.js';
 import { bindBlankContextMenu } from './blank-context-menu.js';
 import { bindNodeContextMenu } from './node-context-menu.js';
 import { bindMoveControls } from './move-controls.js';
@@ -51,14 +51,16 @@ function bindRenameInput() {
 export function initMoveMode() {
   // 注册退出移动模式的钩子，供 history 模块在撤销/重做时自动退出移动模式
   appState.exitMoveMode = (save) => exitMoveMode(save);
+  // 注册进入移动模式钩子：鱼骨「移动线路」复用统一移动模式（nodeId 传 null，规避循环依赖）
+  appState.enterMoveMode = (nodeId) => enterMoveMode(nodeId);
 
   // 1. 重命名输入框
   bindRenameInput();
 
-  // 2. 空白处右键菜单（添加各类根节点 / 粘贴 / 设置 / 应用库）
+  // 2. 空白处长按菜单（添加各类根节点 / 粘贴 / 设置 / 应用库）
   bindBlankContextMenu();
 
-  // 3. 节点右键菜单（操作按钮 / 添加子节点 / 添加下一步）
+  // 3. 节点长按菜单（操作按钮 / 添加子节点 / 添加下一步）
   bindNodeContextMenu();
 
   // 4. 移动模式控制栏 + 大小/速度/颜色滑块
@@ -70,7 +72,7 @@ export function initMoveMode() {
   // 6. 对齐按钮（水平/垂直对齐 / 分组 / 分屏）
   bindAlignButtons();
 
-  // 7. 3D 鼠标事件（拖拽 / 长按旋转 / 右键菜单 / 单击 / 双击 / 连线提示）
+  // 7. 3D 鼠标事件（拖拽 / 长按旋转 / 长按菜单 / 单击 / 双击 / 连线提示）
   //    放在最后，依赖 renderer.domElement 就绪
   bindClickHandlers();
 }

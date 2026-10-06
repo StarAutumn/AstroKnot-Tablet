@@ -8,7 +8,7 @@
 //   ├── shared-state.js      共享状态与刷新回调
 //   ├── lunar-utils.js        农历/节气/节日/时辰（基于 lunar-javascript）
 //   ├── schedule-store.js     日程数据层 + 冲突/颜色/周次逻辑
-//   ├── schedule-forms.js     表单/右键菜单/时间对话框/第一周对话框
+//   ├── schedule-forms.js     表单/长按菜单/时间对话框/第一周对话框
 //   ├── calendar-popup.js     三视图渲染 + 时钟 tick + 弹窗交互
 //   ├── anniversary-store.js  纪念日/倒计时/生日/节日 数据层
 //   ├── anniversary-form.js   纪念日编辑表单
@@ -17,19 +17,19 @@
 //   ├── shift-store.js        排班数据层
 //   ├── diary-store.js        日记数据层（按日期存储）
 //   ├── diary-editor.js       日记富文本编辑器（独立 TinyMCE 实例）
-//   ├── diary-context-menu.js 日历日期右键菜单（添加/删除/插入为节点）
+//   ├── diary-context-menu.js 日历日期长按菜单（添加/删除/插入为节点）
 //   └── weather.js            天气组件
 //
 // lunar-javascript 由 index.html 以 UMD script 加载，
 // 挂载 Solar/Lunar 到 window，lunar-utils.js / anniversary-store.js 直接读取 window.Solar/Lunar。
 
-import './schedule-store.js';        // 触发 localStorage 加载（副作用）
-import './schedule-forms.js';       // 触发表单/菜单 DOM 创建（副作用）
-import './anniversary-store.js';    // 触发纪念日数据加载（副作用）
-import './anniversary-form.js';     // 触发纪念日表单 DOM 创建（副作用）
-import './shift-form.js';           // 触发排班编辑弹窗 DOM 创建（副作用）
-import './diary-store.js';          // 触发日记数据模块加载（副作用）
-import './diary-context-menu.js';   // 触发日记右键菜单 DOM 创建（副作用）
+import './schedule/schedule-store.js';        // 触发 localStorage 加载（副作用）
+import './schedule/schedule-forms.js';       // 触发表单/菜单 DOM 创建（副作用）
+import './anniversary/anniversary-store.js';    // 触发纪念日数据加载（副作用）
+import './anniversary/anniversary-form.js';     // 触发纪念日表单 DOM 创建（副作用）
+import './shift/shift-form/index.js';     // 触发排班编辑弹窗 DOM 创建（副作用）
+import './diary/diary-store.js';          // 触发日记数据模块加载（副作用）
+import './diary/diary-context-menu.js';   // 触发日记长按菜单 DOM 创建（副作用）
 import { initCalendarPopup } from './calendar-popup.js';
 import { initWeather } from './weather.js';
 import { initNotifications } from './notification-store.js';
@@ -38,7 +38,7 @@ import { initNotifications } from './notification-store.js';
 export function initTaskbarClock() {
   // 1) 日历弹窗 + 时钟 tick + 三视图交互
   initCalendarPopup();
-  // 2) 天气组件（含右键菜单、悬浮弹窗）
+  // 2) 天气组件（含长按菜单、悬浮弹窗）
   initWeather();
   // 3) 提醒通知（上班/上课/倒计时）
   initNotifications();

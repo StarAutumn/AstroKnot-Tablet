@@ -151,8 +151,8 @@ export function bindFullscreenAndTab() {
   });
 
   document.addEventListener('pointerdown', function (e) {
-    // 点击右键菜单（itemContextMenu）或确认/输入/关闭弹窗时，不折叠 astroKnotMenu。
-    // 例如：快速笔记、网络项目右键删除会先弹 showConfirm，若在此处折叠菜单会打断操作
+    // 点击长按菜单（itemContextMenu）或确认/输入/关闭弹窗时，不折叠 astroKnotMenu。
+    // 例如：快速笔记、网络项目长按删除会先弹 showConfirm，若在此处折叠菜单会打断操作
     const ctxMenu = document.getElementById('itemContextMenu');
     const isClickOnContextMenu = ctxMenu && ctxMenu.contains(e.target) && ctxMenu.style.display !== 'none';
     const isClickOnModal = ['customConfirmModal', 'customPromptModal', 'customCloseModal'].some(id => {

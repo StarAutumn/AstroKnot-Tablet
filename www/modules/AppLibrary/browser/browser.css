@@ -179,7 +179,7 @@
     color: #5ee8ff;
 }
 
-/* ── 浏览器右键菜单 ── */
+/* ── 浏览器长按菜单 ── */
 .app-browser-context-menu {
     position: absolute;
     z-index: 10002;

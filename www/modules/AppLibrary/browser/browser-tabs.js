@@ -18,7 +18,7 @@ export class BrowserTabs {
    * @param {Function} opts.callbacks.onTabSwitch(tabData)         - 标签切换
    * @param {Function} opts.callbacks.onNavigate(url, title)       - 页面导航完成（用于历史记录）
    * @param {Function} opts.callbacks.onOpenFindBar()              - 打开查找栏
-   * @param {Function} opts.callbacks.onCreateTab(url)             - 创建新标签（由右键菜单等触发）
+   * @param {Function} opts.callbacks.onCreateTab(url)             - 创建新标签（由长按菜单等触发）
    */
   constructor({ tabList, bodyEl, app, callbacks }) {
     this._tabList = tabList;
@@ -77,7 +77,7 @@ export class BrowserTabs {
   }
 
   /**
-   * 注入右键菜单坐标捕获器到 webview 页面
+   * 注入长按菜单坐标捕获器到 webview 页面
    * 在捕获阶段记录 contextmenu 事件的 clientX/clientY（webview 视口坐标），
    * 解决 Electron context-menu 事件 params.x/y 坐标系不可靠（疑似屏幕坐标）的问题。
    * 跨域导航会生成新 window，标志位重置 → 自动重装；同域导航 window 复用 → 标志位防重复。
@@ -158,9 +158,9 @@ export class BrowserTabs {
       webview.removeEventListener('dom-ready', onFirstReady);
     });
 
-    // 每次导航后注入右键坐标捕获器（持久监听）
+    // 每次导航后注入长按坐标捕获器（持久监听）
     // DOM contextmenu 事件先于 Electron context-menu 事件触发，
-    // 在捕获阶段记录 clientX/clientY（webview 视口坐标），供右键菜单精确定位
+    // 在捕获阶段记录 clientX/clientY（webview 视口坐标），供长按菜单精确定位
     webview.addEventListener('dom-ready', () => {
       this._injectContextMenuCapture(webview);
     });
@@ -229,7 +229,7 @@ export class BrowserTabs {
       }
     });
 
-    // ── 右键菜单 ──
+    // ── 长按菜单 ──
     webview.addEventListener('context-menu', (e) => {
       this._cb.onContextMenu(webview, e);
     });

@@ -8,24 +8,24 @@ import {
   getMondayOf, getWeekNumber, isWeeklyActiveAtWeek,
   colorForTitle, parseSlotRange,
   removeEvent, removeWeeklyAt, clearAll, getStats
-} from './schedule-store.js';
+} from './schedule/schedule-store.js';
 import {
   openEventForm, openWeeklyForm, openSlotMenu,
   hideEventForm, hideSlotMenu, hideSlotTimeForm, hideFirstWeekForm,
   addSlotClicked, openFirstWeekForm
-} from './schedule-forms.js';
+} from './schedule/schedule-forms.js';
 import {
   renderAnniversaryView, bindAnniversaryEvents,
   setRefreshAnniversary
-} from './anniversary-view.js';
-import { hideAnniversaryForm } from './anniversary-form.js';
+} from './anniversary/anniversary-view.js';
+import { hideAnniversaryForm } from './anniversary/anniversary-form.js';
 import { getTabs, addTab, removeTab } from './items-tabs-store.js';
 import { openAddTabForm, hideAddTabForm } from './add-tab-form.js';
-import { openShiftForm, editShiftForm } from './shift-form.js';
-import { getShiftSchedules, getDayShifts, removeShiftSchedule, loadActiveShiftId, saveActiveShiftId } from './shift-store.js';
+import { openShiftForm, editShiftForm } from './shift/shift-form/index.js';
+import { getShiftSchedules, getDayShifts, removeShiftSchedule, loadActiveShiftId, saveActiveShiftId } from './shift/shift-store.js';
 import { getNotificationHistory, clearNotificationHistory, removeNotificationItem } from './notification-store.js';
-import { loadDiaryIndex, hasDiary, fmtDiaryDate } from './diary-store.js';
-import { openDiaryMenu, hideDiaryMenu } from './diary-context-menu.js';
+import { loadDiaryIndex, hasDiary, fmtDiaryDate } from './diary/diary-store.js';
+import { openDiaryMenu, hideDiaryMenu } from './diary/diary-context-menu.js';
 
 const { monthNames, weekHeaders, weekDayNames, weekColOrder } = state;
 
@@ -817,7 +817,7 @@ function bindPopupEvents() {
     if (importBtn && state.calView === 'week') {
       e.stopPropagation();
       // 动态导入，避免循环依赖
-      import('./schedule-import.js').then(function (mod) {
+      import('./schedule/schedule-import.js').then(function (mod) {
         if (typeof mod.openScheduleImport === 'function') {
           mod.openScheduleImport(refreshPopup);
         }
@@ -828,9 +828,9 @@ function bindPopupEvents() {
     }
   });
 
-  // 右键时段格 → 弹出菜单
+  // 长按时段格 → 弹出菜单
   calPopup.addEventListener('contextmenu', function (e) {
-    // 右键日期格（月视图）→ 弹出日记菜单
+    // 长按日期格（月视图）→ 弹出日记菜单
     const dayCell = e.target.closest('.cal-day');
     if (dayCell && state.calView === 'month') {
       e.preventDefault();
@@ -843,7 +843,7 @@ function bindPopupEvents() {
       return;
     }
 
-    // 右键排班选项 → 弹出编辑/删除菜单
+    // 长按排班选项 → 弹出编辑/删除菜单
     const shiftItem = e.target.closest('.shift-schedule-item');
     if (shiftItem && state.shiftDropdownVisible) {
       const sid = shiftItem.dataset.scheduleId;
@@ -933,7 +933,7 @@ function tick() {
   if (dateEl) dateEl.textContent = wd + ' ' + y + '/' + m + '/' + d;
 }
 
-// 排班选项右键菜单
+// 排班选项长按菜单
 function openShiftItemMenu(x, y, scheduleId) {
   // 移除已有菜单
   const existing = document.getElementById('shiftItemMenu');

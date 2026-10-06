@@ -178,7 +178,7 @@ export class SandboxActivityBar {
       });
       previewTab.appendChild(closeBtn);
 
-      // 右键菜单
+      // 长按菜单
       previewTab.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -203,7 +203,7 @@ export class SandboxActivityBar {
   }
 
   /**
-   * 显示预览标签页的右键菜单
+   * 显示预览标签页的长按菜单
    * @param {number} x - 菜单横坐标
    * @param {number} y - 菜单纵坐标
    */
@@ -248,7 +248,7 @@ export class SandboxActivityBar {
   }
 
   /**
-   * 关闭预览右键菜单
+   * 关闭预览长按菜单
    * @private
    */
   _closePreviewContextMenu() {

@@ -8,7 +8,7 @@
 // ============================================================
 
 import { appState } from '../module0_AppState.js';
-import { getEmergencySnapshot } from '../module2_TreeData.js';
+import { getEmergencySnapshot } from '../TreeData/index.js';
 import { commit as versionCommit, amend as versionAmend, clearCache } from './versionGraph.js';
 
 let _initialized = false;
@@ -34,7 +34,7 @@ async function handleProjectSaved() {
   try {
     const snap = getEmergencySnapshot();
     if (!snap) return;
-    // 自动提交，label 默认为空（用户可通过右键重命名设置）
+    // 自动提交，label 默认为空（用户可通过长按重命名设置）
     const result = await versionCommit(pid, snap.snapshot, '');
     // 静默处理：不弹窗，只在控制台记录
     if (result.skipped) {

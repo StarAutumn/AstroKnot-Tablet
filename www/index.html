@@ -81,10 +81,6 @@
     <link rel="stylesheet" href="./lib/reveal-theme-black.css">
     <script src="./lib/reveal.min.js"></script>
 
-    <!-- Swiper.js 内嵌幻灯片/轮播 (MIT) -->
-    <link rel="stylesheet" href="./lib/swiper-bundle.min.css">
-    <script src="./lib/swiper-bundle.min.js"></script>
-
     <!-- Univer 表格编辑器 (Apache-2.0) — 全部本地化 -->
     <script src="./lib/react.production.min.js"></script>
     <script src="./lib/react-dom.production.min.js"></script>
@@ -184,7 +180,7 @@
         <button class="titlebar-btn" id="tbMinBtn" title="最小化">─</button>
         <button class="titlebar-btn" id="tbMaxBtn" title="最大化">☐</button>
         <button class="titlebar-btn titlebar-close-btn" id="tbCloseBtn" title="关闭">✕</button>
-        <!-- 右键菜单 -->
+        <!-- 长按菜单 -->
         <div id="titlebarContextMenu" class="titlebar-context-menu" style="display:none;">
             <button id="tcmRestore">还原</button>
             <button id="tcmMove">移动</button>
@@ -219,12 +215,14 @@
                     <div class="arrange-category">3D 模式</div>
                     <button class="arrange-tree-btn" id="arrange3DDefaultBtn">默认排列</button>
                     <button class="arrange-tree-btn" id="arrange3D2DBtn">2D模式排列</button>
+                    <label class="arrange-sync-row" title="勾选后：2D 自动排列 / 所有图层排列时实时同步映射到 3D，无需再点击「2D模式排列」">
+                        <input type="checkbox" id="arrange3DSyncCheckbox">排列实时同步 2D→3D
+                    </label>
                 </div>
             </div>
         </div>
         <div class="taskbar-tabs" id="taskbarTabs"></div>
         <div class="taskbar-right">
-            <button id="aiTaskbarBtn" class="control-btn" title="AI 助手">🤖</button>
             <div id="zoomToggleWrap" style="position:relative;display:flex;align-items:center;height:100%;">
                 <button id="toggleZoomPanelBtn" class="control-btn" title="显示隐藏的的图标">🔼</button>
                 <div id="zoomPopup" class="zoom-popup">
@@ -294,60 +292,6 @@
             <button id="toggleNodeGlowBtn" class="menu-bottom-btn" title="设置">⚙️</button>
             <button id="closeAstroKnotMenuBtn" class="menu-bottom-btn menu-close-btn" title="关闭应用"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:block"><path d="M12 2v8"/><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/></svg></button>
         </div>
-    </div>
-
-    <!-- ==================== AI 对话框浮窗 ==================== -->
-    <div id="aiFloatingDialog" class="minimized">
-        <div class="ai-drag-header">
-            <h4>AI 助手</h4>
-            <div class="ai-header-buttons" style="position:relative">
-                <button id="aiExportBtn" class="ai-header-btn" title="导出当前对话">⤴️</button>
-                <button id="aiHistoryBtn" class="ai-header-btn" title="历史对话">🕜</button>
-                <button id="aiNewChatBtn" class="ai-header-btn" title="新建对话">+</button>
-                <button id="aiCloseBtn" class="ai-header-btn ai-close-btn" title="关闭">✕</button>
-            </div>
-        </div>
-        <div id="aiHistoryPanel" class="ai-history-panel"></div>
-        <div class="panel-accent-line"></div>
-        <div class="ai-chat-body" id="aiChatBody">
-            <div class="ai-chat-messages" id="aiChatMessages">
-                <div class="ai-message system">你好！我是AI助手，有什么可以帮你？</div>
-            </div>
-            <div class="ai-input-toolbar">
-                <select id="aiAgentSelect" class="ai-toolbar-select">
-                    <option value="">🤁 选择智能体</option>
-                    <option value="chat" selected>🗣️ Chat</option>
-                    <option value="agent">🤖 Agent</option>
-                </select>
-            </div>
-            <div class="ai-chat-input">
-                <textarea id="aiChatInput" placeholder="输入消息..." rows="3"></textarea>
-                <div class="ai-input-footer">
-                    <div class="ai-model-trigger-wrap">
-                        <button id="aiModelTrigger" class="ai-model-trigger">🧠 选择模型</button>
-                        <div id="aiModelPanel" class="ai-model-panel">
-                            <div class="ai-model-list" id="aiModelList"></div>
-                            <div class="ai-model-panel-bottom">
-                                <button id="aiAddModelBtn" class="ai-add-model-btn">+ 添加模型</button>
-                                <div class="ai-mock-toggle" id="aiMockToggle">
-                                    <span>🧪 模拟模式</span>
-                                    <span class="ai-mock-toggle-switch" id="aiMockSwitch">关闭</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button id="aiSendBtn" class="ai-send-btn">发送</button>
-                </div>
-            </div>
-        </div>
-        <div class="floating-resize-handle" data-handle="n"></div>
-        <div class="floating-resize-handle" data-handle="s"></div>
-        <div class="floating-resize-handle" data-handle="e"></div>
-        <div class="floating-resize-handle" data-handle="w"></div>
-        <div class="floating-resize-handle" data-handle="ne"></div>
-        <div class="floating-resize-handle" data-handle="nw"></div>
-        <div class="floating-resize-handle" data-handle="se"></div>
-        <div class="floating-resize-handle" data-handle="sw"></div>
     </div>
 
     <!-- ==================== 2D 视图画布（预留） ==================== -->
@@ -1730,7 +1674,7 @@
         </table>
     </div>
 
-    <!-- ==================== 右键菜单（节点专用） ==================== -->
+    <!-- ==================== 长按菜单（节点专用） ==================== -->
     <div id="nodeContextMenu">
         <div class="menu-title" style="display:flex; align-items:center; gap:6px;">
             <span id="contextNodeName">节点名称</span>
@@ -1757,12 +1701,12 @@
          <div class="menu-row" id="openCodeEditorRow" style="display:none;">
             <button id="openHtmlEditorBtn" style="background:#4a2c6e;">💻 编辑代码</button>
         </div>
-        <div class="menu-row">
+        <div class="menu-row" id="nodeSizeRow">
             <label>节点大小</label>
             <input type="range" id="nodeSizeSlider" min="0.3" max="3" step="0.1" value="1">
             <span id="nodeSizeValue">1.0</span>
         </div>
-        <div class="menu-row">
+        <div class="menu-row" id="ringSpeedRow">
             <label>光环速度</label>
             <input type="range" id="ringSpeedSlider" min="0" max="5" step="0.1" value="1">
             <span id="ringSpeedValue">1.0</span>
@@ -1772,7 +1716,7 @@
             <input type="color" id="nodeFixedColorPicker" value="#ffffff">
             <button id="clearFixedColorBtn">清除</button>
         </div>
-        <div class="menu-row">
+        <div class="menu-row" id="nodeShapeRow">
             <label>2D节点图形</label>
             <select id="nodeShapeSelect"
                 style="flex:1; background:#07161f; border:1px solid #2c6e7e; color:#eef; padding:3px 6px; border-radius:8px; font-size:12px;">
@@ -1782,7 +1726,7 @@
                 <option value="stadium">跑道形</option>
             </select>
         </div>
-        <div class="menu-row">
+        <div class="menu-row" id="node3DShapeRow">
             <label>3D节点形状</label>
             <select id="node3DShapeSelect"
                 style="flex:1; background:#07161f; border:1px solid #2c6e7e; color:#eef; padding:3px 6px; border-radius:8px; font-size:12px;">
@@ -1833,19 +1777,19 @@
         <div class="menu-row" id="splitScreenRow" style="display:none;">
             <button id="splitScreenBtn" style="background:#2c5a6e;">分屏显示</button>
         </div>
-        <div class="menu-row">
+        <div class="menu-row" id="cardModeRow">
             <button id="toggleCardModeBtn" style="background:#4a5c2c;">📄 显示文本内容</button>
              <button id="toggleWebpageModeBtn" style="background:#2c4a5c;">🌐 变为网页节点</button>
         </div>
 
-        <div class="menu-row">
+        <div class="menu-row" id="connectionRow">
             <button id="addConnectionContextBtn" style="background:#2c6e7e;">添加连线</button>
             <button id="removeConnectionContextBtn" style="background:#6a3c3c;">删除连线</button>
         </div>
-        <div class="menu-row">
+        <div class="menu-row" id="folderRow">
             <button id="showNodeFolderBtn" style="background:#2c4a6c;">📂 打开文件所在位置</button>
         </div>
-        <div class="menu-row">
+        <div class="menu-row" id="opsRow">
             <button id="moveNodeBtn" style="background:#2c6e7e;">移动节点</button>
             <button id="copyNodeBtn" style="background:#2c5a7e;">复制节点</button>
             <button id="deleteNodeContextBtn" style="background:#6a2c2c;">删除该节点</button>
@@ -1853,7 +1797,7 @@
 
     </div>
 
-    <!-- ==================== 空白区域右键菜单 ==================== -->
+    <!-- ==================== 空白区域长按菜单 ==================== -->
     <div id="blankContextMenu"
         style="position:absolute;background:var(--panel-bg);backdrop-filter:blur(16px);border:1px solid var(--panel-border);border-radius:var(--panel-radius);padding:8px;z-index:4000;display:none;flex-direction:column;gap:4px;min-width:200px;box-shadow:var(--panel-shadow);color:var(--text-primary);font-family:system-ui,sans-serif;font-size:13px;">
         <div class="panel-accent-line" style="margin-bottom:4px;"></div>
@@ -1862,6 +1806,9 @@
         </div>
         <div class="menu-row">
             <button id="addStepRootNodeBtn" style="background:rgba(106,60,122,0.6);">⬆ 新建步骤根节点</button>
+        </div>
+        <div class="menu-row">
+            <button id="drawFishboneTrunkBtn" style="background:rgba(163,102,45,0.6);">🐟 绘制主干线段</button>
         </div>
         <div class="menu-row" style="border-top:1px solid rgba(255,255,255,0.06);padding-top:6px;">
             <button id="undoBtn" title="撤销 (Ctrl+Z)" style="background:rgba(255,255,255,0.06);flex:1;">↩ 撤销</button>
@@ -2248,7 +2195,7 @@
         </div>
     </div>
 
-    <!-- ==================== 群组矩形右键菜单 ==================== -->
+    <!-- ==================== 群组矩形长按菜单 ==================== -->
     <div id="groupContextMenu"
         style="position:absolute;background:var(--panel-bg);backdrop-filter:blur(16px);border:1px solid var(--panel-border);border-radius:var(--panel-radius);padding:8px;z-index:4000;display:none;flex-direction:column;gap:12px;min-width:220px;box-shadow:var(--panel-shadow);color:var(--text-primary);font-family:system-ui,sans-serif;font-size:13px;">
         <div class="panel-accent-line" style="margin-bottom:4px;"></div>
@@ -2319,8 +2266,8 @@
                     <ul>
                         <li>全局搜索栏：输入节点名称/节点笔记关键字，弹出下拉选项框，点击后会自动聚焦匹配的节点，并打开对应节点文本编辑器并聚焦到关键字所在位置，</li>
                         <li>网络项目：当前打开的网络项目，标题框的按钮从左到右依次为:批量保存网络项目列表内所有的项目，加载项目，导入markdown文件，新建项目类。
-                            点击列表的项目可切换到其他对应的项目，右键支持重命名，复制，删除项目</li>
-                        <li>快速笔记：系统所有快速笔记，“+”为新建快速笔记，点击打开对应的快速笔记，右键支持重命名，复制，删除笔记</li>
+                            点击列表的项目可切换到其他对应的项目，长按支持重命名，复制，删除项目</li>
+                        <li>快速笔记：系统所有快速笔记，“+”为新建快速笔记，点击打开对应的快速笔记，长按支持重命名，复制，删除笔记</li>
                         <li>设置（左下角的齿轮）：设置3D场景参数，2D网格背景颜色，主题色，文件保存位置</li>
                         <li>关闭应用（右下角的电源符号）</li>
                     </ul>
@@ -2336,20 +2283,20 @@
                     </ul>
                     <li>机器人按钮：AI对话框（目前还在开发...）</li>
                     <li>蓝色向上箭头按钮：里面包含放大/缩小视角按钮和连线标签显示隐藏切换按钮</li>
-                    <li>天气按钮：显示当前的天气信息，悬浮则弹出详细的天气信息，左键单击刷新天气信息，右键弹出选项框可重新定位和手动定位(弹出地址输入栏弹出框)</li>
+                    <li>天气按钮：显示当前的天气信息，悬浮则弹出详细的天气信息，单击刷新天气信息，长按弹出选项框可重新定位和手动定位(弹出地址输入栏弹出框)</li>
                     <li>日期时间：悬浮可显示农历和时辰</li>
                 </ul>
-                <h3>右键空白区域菜单</h3>
+                <h3>长按空白区域菜单</h3>
                 <li>新建根节点/新建步骤节点（随后在2D模式解释二者区别）</li>
                 <li>撤销/重做对节点连线的所有操作（Ctrl+Z / Ctrl+Y）</li>
                 <li>粘贴节点：粘贴在复制的所有节点</li>
                 <h3>3D 模式操作</h3>
                 <ul>
-                    <li>鼠标左键长按拖拽空白区域 → 旋转视角</li>
+                    <li>按住拖拽空白区域 → 旋转视角</li>
                     <li>鼠标滚轮 → 缩放视距</li>
                     <li>WASD / 空格 / ctrl → 平移视角（3D模式）</li>
-                    <li>左键双击节点，进入该节点的文本编辑器</li>
-                    <li>右键节点 → 打开该节点的属性菜单</li>
+                    <li>双击节点，进入该节点的文本编辑器</li>
+                    <li>长按节点 → 打开该节点的属性菜单</li>
                     <ul>
                         <h3>节点管理</h3>
                         <li>点击节点名称旁边的铅笔符号，对节点重命名，enter回车确认</li>
@@ -2359,22 +2306,22 @@
                         <li>添加下一步节点：点击"新建下一步节点"按钮，在当前节点下新建一个下一步节点（随后在2D模式介绍中说明两种节点的关系）</li>
                         <h3>连线管理</h3>
                         <ul>
-                            <li>"添加连线"→ 左键点击目标节点完成连线，两个节点之间支持多条连线</li>
-                            <li>"删除连线"→ 左键点击目标节点，多条连线时可多选删除，或者点击对应连线弹出连线标签框，点击“删除此连线”</li>
-                            <li>右键取消 / Esc 退出连线模式</li>
+                            <li>"添加连线"→ 点击目标节点完成连线，两个节点之间支持多条连线</li>
+                            <li>"删除连线"→ 点击目标节点，多条连线时可多选删除，或者点击对应连线弹出连线标签框，点击“删除此连线”</li>
+                            <li>长按取消 / Esc 退出连线模式</li>
                             <li>树形连线由父子关系自动生成</li>
                         </ul>
                         <li>"折叠/展开子节点"按钮可显示/隐藏该节点的所有后代节点</li>
                         <li>定位到2/3D视图：可自动切换到2d模式该节点所在图层（或者切换到3D模式），并聚焦到该节点所在位置</li>
                         <li>移动节点：进入移动模式，可拖拽移动所有节点的位置，点击"确定"按钮完成移动，点击"取消"按钮取消移动</li>
-                        <li>复制节点：复制该节点及其所有子孙节点，右键单击空白区域，弹出选项框，点击“粘贴节点”即完成复制粘贴操作</li>
+                        <li>复制节点：复制该节点及其所有子孙节点，长按单击空白区域，弹出选项框，点击“粘贴节点”即完成复制粘贴操作</li>
                         <li>删除该节点：删除该节点及其所有子孙节点</li>
                     </ul>
                 </ul>
                 <h3>2D 模式操作</h3>
                 <li>点击底部"2D模式"按钮切换</li>
                 <li>滚轮 → 缩放</li>
-                <li>右键空白区域菜单和节点的属性菜单同3D模式</li>
+                <li>长按空白区域菜单和节点的属性菜单同3D模式</li>
                 <li>支持直接拖拽移动节点</li>
                 <li>上下左右平移移动是WASD/↑↓←→，拖拽空白区域为框选多个节点，或者按住ctrl选择多个节点</li>
                 <ul>
@@ -2396,17 +2343,17 @@
                         <li><strong>打开图层面板</strong>：点击底部任务栏中的 <strong>🗂️ 图层管理按钮</strong>（位于任务栏左侧），弹出图层管理浮动面板；面板可拖拽移动位置
                         </li>
                         <li><strong>创建新图层</strong>：在图层面板顶部点击 <strong>"＋ 新建图层"</strong> 按钮，自动创建并命名为"图层 N"（N
-                            为当前图层数+1）；也可右键某图层选择"在此图层下新建"在其下方插入新图层</li>
-                        <li><strong>切换图层</strong>：在图层面板列表中<strong>左键点击目标图层名称</strong>即可切换；当前激活的图层以高亮样式显示（带 active
+                            为当前图层数+1）；也可长按某图层选择"在此图层下新建"在其下方插入新图层</li>
+                        <li><strong>切换图层</strong>：在图层面板列表中<strong>点击目标图层名称</strong>即可切换；当前激活的图层以高亮样式显示（带 active
                             标记）；切换后 2D 视图自动刷新仅显示当前图层内的节点，3D 模式下相机将平滑动画移动到该图层平面并显示蓝色高亮矩形</li>
-                        <li><strong>重命名图层</strong>：在图层面板中<strong>右键点击图层项</strong> → 选择"重命名"，图层名称变为可编辑输入框，修改后按回车或点击空白处确认
+                        <li><strong>重命名图层</strong>：在图层面板中<strong>长按点击图层项</strong> → 选择"重命名"，图层名称变为可编辑输入框，修改后按回车或点击空白处确认
                         </li>
-                        <li><strong>删除图层</strong>：在图层面板中<strong>右键点击图层项</strong> →
+                        <li><strong>删除图层</strong>：在图层面板中<strong>长按点击图层项</strong> →
                             选择"删除"，弹出确认对话框；删除后该图层中的所有节点会自动迁移到剩余图层（不会丢失数据）；系统至少保留一个图层不可删除</li>
                         <li><strong>拖拽排序</strong>：在图层面板列表中直接拖拽图层项上下移动，可调整图层顺序；3D 模式下图层顺序对应空间中的上下堆叠关系</li>
                         <li><strong>图层总览</strong>：点击图层面板顶部的 <strong>📑 总览按钮</strong>，进入全屏 3D
                             层叠视图，以卡片形式展示所有图层及其节点数量分布；点击任意卡片或标签可快速跳转到对应图层</li>
-                        <li><strong>跨图层复制粘贴</strong>：在源图层中选中一个或多个节点（左键单击选中，Ctrl+左键多选）→ 按 <strong>Ctrl+C 复制</strong> →
+                        <li><strong>跨图层复制粘贴</strong>：在源图层中选中一个或多个节点（单击选中，框选多选）→ 按 <strong>Ctrl+C 复制</strong> →
                             在图层面板中切换到目标图层 → 按 <strong>Ctrl+V 粘贴</strong>；粘贴的节点会出现在鼠标光标附近（2D 视图）或偏移固定距离（3D 视图），并自动归属到当前图层
                         </li>
                     </ul>
@@ -2416,10 +2363,10 @@
                         <h3>跨图层连线</h3>
                         <li>不同图层之间的节点可以建立连接关系（称为"跨图层连线"或 CrossEdge），形成跨层的知识关联网络。连线数据存储在 crossEdges 数组中，与普通树形连线（父子关系）相互独立
                         </li>
-                        <li><strong>添加跨图层连线 — 方式一（快捷连线）</strong>：右键点击源节点 → 选择菜单中的 <strong>"添加连线"</strong> →
-                            进入连线模式（鼠标变为十字准星）→ 直接<strong>左键单击目标节点</strong>（无论目标节点是否在当前图层）→ 弹出标签输入框 → 输入连线名称后点"确定"完成</li>
+                        <li><strong>添加跨图层连线 — 方式一（快捷连线）</strong>：长按点击源节点 → 选择菜单中的 <strong>"添加连线"</strong> →
+                            进入连线模式（鼠标变为十字准星）→ 直接<strong>单击目标节点</strong>（无论目标节点是否在当前图层）→ 弹出标签输入框 → 输入连线名称后点"确定"完成</li>
                         <li><strong>添加跨图层连线 — 方式二（锚点自由绘制）</strong>：进入连线模式后，节点的四边中点和四角会出现 <strong>8 个蓝色锚点圆圈</strong> →
-                            点击源节点的某个锚点作为起点 → 进入自由绘制状态 → 可在空白处<strong>左键点击添加拐点</strong>（折线连线）→ 最终点击目标节点的锚点完成连线 →
+                            点击源节点的某个锚点作为起点 → 进入自由绘制状态 → 可在空白处<strong>点击添加拐点</strong>（折线连线）→ 最终点击目标节点的锚点完成连线 →
                             输入标签确认。此方式可绘制带拐点的复杂折线路径</li>
                         <li><strong>查看跨图层连线</strong>：
                             <ul>
@@ -2429,11 +2376,11 @@
                                 <li>涉及跨图层连线的节点，其外围会绘制一层<strong>双实线边框</strong>（带呼吸间距动画），直观标识该节点存在跨层关联</li>
                             </ul>
                         </li>
-                        <li><strong>跨图层导航</strong>：右键点击任一节点时，如果该节点存在跨图层连线，右键菜单中会显示 <strong>"跨图层连接"</strong>
-                            区域，列出所有跨层关联的节点，格式为 <strong>"节点名 (所在图层名)" + 连线标签</strong> → 左键点击其中一项可自动跳转到对方节点所在的图层并将视图聚焦到该节点
+                        <li><strong>跨图层导航</strong>：长按点击任一节点时，如果该节点存在跨图层连线，长按菜单中会显示 <strong>"跨图层连接"</strong>
+                            区域，列出所有跨层关联的节点，格式为 <strong>"节点名 (所在图层名)" + 连线标签</strong> → 点击其中一项可自动跳转到对方节点所在的图层并将视图聚焦到该节点
                         </li>
-                        <li><strong>删除跨图层连线</strong>：右键点击有连线的节点 → 选择 <strong>"删除连线"</strong> → 进入删除模式 →
-                            点击要断开的目标节点即可移除该条连线；或在跨图层连接区域右键具体连线项 → 子菜单中选择删除</li>
+                        <li><strong>删除跨图层连线</strong>：长按点击有连线的节点 → 选择 <strong>"删除连线"</strong> → 进入删除模式 →
+                            点击要断开的目标节点即可移除该条连线；或在跨图层连接区域长按具体连线项 → 子菜单中选择删除</li>
                         <li><strong>呼吸光效提示</strong>：
                             <ul>
                                 <li><strong>选中节点</strong>且存在跨图层/同层连线时：节点外围叠加双层呼吸光晕（青色 #33ffff/#88ffff 用于一般连接，紫色
@@ -2443,19 +2390,19 @@
                                 <li>跨图层连线本身也带有闪烁光晕效果（glow），当连线端点处于选中状态时光晕增强</li>
                             </ul>
                         </li>
-                        <li><strong>取消连线操作</strong>：进入连线模式后，按 <strong>Esc 键</strong> 或右键空白区域可随时取消当前连线操作</li>
+                        <li><strong>取消连线操作</strong>：进入连线模式后，按 <strong>Esc 键</strong> 或长按空白区域可随时取消当前连线操作</li>
                     </ul>
                 </ul>
                 <h3>富文本笔记</h3>
                 <ul>
-                    <li><strong>打开方式</strong>：右键点击节点 → 选择"编辑内容"，或双击节点打开富文本编辑器</li>
+                    <li><strong>打开方式</strong>：长按点击节点 → 选择"编辑内容"，或双击节点打开富文本编辑器</li>
                     <li><strong>字体格式</strong>：支持加粗、斜体、下划线、删除线、着重号、上标/下标；可设置文字颜色和背景色；支持中英文字体切换（cnfontfamily /
                         enfontfamily）及字号调节（fontplus / fontminus）；支持繁简转换（fan2jian / jian2fan）、拼音标注</li>
                     <li><strong>段落排版</strong>：支持标题级别、行高（lineheight）、段落间距（paraspacing）、对齐方式（左/中/右/两端/分散对齐）、首字下沉（dropcap）、引用块（blockquote）、水平分割线（hr）；支持有序/无序列表缩进调整（outdent
                         / indent）</li>
                     <li><strong>插入元素</strong>
                         <ul>
-                            <li><strong>图片</strong>：支持从本地选择图片插入，插入后可拖拽缩放、调整透明度和对齐方式（左/居中/右），右键图片可进行格式设置</li>
+                            <li><strong>图片</strong>：支持从本地选择图片插入，插入后可拖拽缩放、调整透明度和对齐方式（左/居中/右），长按图片可进行格式设置</li>
                             <li><strong>表格</strong>：通过网格选择器快速创建表格，支持行列合并等操作</li>
                             <li><strong>链接</strong>：插入超链接，支持外部 URL 和本地文件路径</li>
                             <li><strong>LaTeX 公式</strong>：点击 Σ 按钮打开公式编辑器，支持数学公式渲染</li>
@@ -2498,7 +2445,7 @@
             2x3 表格</div>
     </div>
 
-    <!-- 图片右键菜单 -->
+    <!-- 图片长按菜单 -->
     <div id="imgContextMenu"
         style="display:none; position:absolute; background:var(--panel-bg); backdrop-filter:blur(10px); border:1px solid var(--panel-border); border-radius:var(--panel-radius); padding:10px; z-index:9999; flex-direction:column; gap:8px; min-width:180px; box-shadow:var(--panel-shadow); color:var(--text-primary); font-size:12px;">
         <div style="display:flex; gap:4px;">
@@ -2522,7 +2469,7 @@
         </div>
     </div>
 
-    <!-- 文件右键菜单 -->
+    <!-- 文件长按菜单 -->
     <div id="fileContextMenu"
         style="display:none; position:absolute; background:var(--panel-bg); backdrop-filter:blur(10px); border:1px solid var(--panel-border); border-radius:var(--panel-radius); padding:10px; z-index:9999; flex-direction:column; gap:8px; min-width:140px; box-shadow:var(--panel-shadow); color:var(--text-primary); font-size:12px;">
         <div style="display:flex; justify-content:center;">
@@ -2537,13 +2484,13 @@
         </div>
     </div>
 
-    <!-- 表格边框右键菜单 -->
+    <!-- 表格边框长按菜单 -->
 
     <!-- ==================== 图层管理浮动面板 ==================== -->
     <div id="layerManagerModal" class="layer-panel" style="display:none;">
         <div class="layer-panel-header" id="layerPanelHeader">
             <span class="layer-panel-drag-handle">⠿</span>
-            <span class="layer-panel-title">🗂️ 图层管理</span>
+            <span class="layer-panel-title">图层管理</span>
             <div class="layer-panel-header-btns">
                 <button id="addLayerBtn" class="layer-header-btn">＋ 新建图层</button>
                 <button id="layerSpacingBtn" class="layer-header-btn layer-ghost-btn" title="3D 排列层间距">📏</button>
@@ -2555,7 +2502,7 @@
         <div class="layer-list" id="layerList"></div>
     </div>
 
-    <!-- 图层右键菜单 -->
+    <!-- 图层长按菜单 -->
     <div id="layerContextMenu" class="layer-context-menu">
         <button id="renameLayerBtn" class="layer-menu-btn">✏️ 重命名</button>
         <button id="addLayerBelowBtn" class="layer-menu-btn">➕ 在本图层下新建</button>
@@ -2567,7 +2514,7 @@
         <div class="layer-overview-bg"></div>
         <div class="layer-overview-content">
             <div class="layer-overview-title">📑 图层总览</div>
-            <div class="layer-overview-hint">左键进入图层 · 右键更多操作 · <span class="layer-overview-esc">ESC 返回</span></div>
+            <div class="layer-overview-hint">点按进入图层 · 长按更多操作 · <span class="layer-overview-esc">ESC 返回</span></div>
             <div class="layer-overview-cards" id="layerOverviewCards"></div>
         </div>
     </div>
@@ -2623,6 +2570,32 @@
       if (typeof SystemStorage !== 'undefined') {
         SystemStorage.install();
       }
+    </script>
+    <!-- 标题栏窗口按钮早绑定：闪屏/模块加载期间即可最小化/最大化/关闭
+         （AstroKnot.js initTitleBar 会移除这些临时处理器并绑定正式逻辑） -->
+    <script>
+      (function () {
+        const api = window.api;
+        if (!api) return;
+        const earlyBind = (id, fn) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.__earlyHandler = fn;
+          el.addEventListener('click', fn);
+        };
+        earlyBind('tbMinBtn', () => api.winMinimize());
+        earlyBind('tbMaxBtn', () => api.winMaximize());
+        earlyBind('tbCloseBtn', () => (window.requestAppClose ? window.requestAppClose() : api.winClose()));
+        // 双击标题栏最大化/还原（正式绑定前的临时版本）
+        const titleBar = document.getElementById('appTitleBar');
+        if (titleBar) {
+          titleBar.__earlyDblHandler = (e) => {
+            if (e.target.tagName === 'BUTTON') return;
+            api.winMaximize();
+          };
+          titleBar.addEventListener('dblclick', titleBar.__earlyDblHandler);
+        }
+      })();
     </script>
     <script type="module">
       // [tablet-trim] 存储门闩：等文件化存储预载/迁移完成（fs-boot 发布）

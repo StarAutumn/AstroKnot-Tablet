@@ -1,5 +1,5 @@
 // ============================================================
-//  browser/browser-context-menu.js — 自定义右键菜单
+//  browser/browser-context-menu.js — 自定义长按菜单
 //  选中文本/图片/链接/通用操作 + 网页转节点/Markdown 剪藏
 // ============================================================
 
@@ -32,13 +32,13 @@ export class BrowserContextMenu {
   }
 
   /**
-   * 显示右键菜单
+   * 显示长按菜单
    * @param {Electron.WebviewTag} webview - 触发菜单的 webview
    * @param {Event} e - context-menu 事件
    */
   async show(webview, e) {
     e.preventDefault();
-    // 先移除已有的右键菜单和遮罩（webview 内的右键不会冒泡到 document，closeMenu 无法触发）
+    // 先移除已有的长按菜单和遮罩（webview 内的长按不会冒泡到 document，closeMenu 无法触发）
     this._content.querySelectorAll('.app-browser-context-menu, .app-browser-ctx-overlay').forEach(el => el.remove());
     const menu = document.createElement('div');
     menu.className = 'app-browser-context-menu';
