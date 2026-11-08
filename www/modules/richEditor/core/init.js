@@ -43,15 +43,15 @@ export function initCKEditor() {
     inline: true,
     fixed_toolbar_container: '#toolbarDock',
     language: 'zh_CN',
-    language_url: 'lib/langs/zh_CN.js', // [tablet-trim] 离线化：本地语言包
-    skin_url: 'lib/skins/ui/oxide-dark', // [tablet-trim] 离线化：本地 skin
-    content_css: 'lib/skins/content/dark/content.min.css', // [tablet-trim] 离线化：本地 content CSS
+    language_url: 'lib/langs/zh_CN.js',
+    skin_url: 'lib/skins/ui/oxide-dark',
+    content_css: 'lib/skins/content/dark/content.min.css',
     content_style: contentStyle +
       'body{font-size:' + (appState.editorFontSize || 14) + 'px !important;}' +
       'span.gradient-text{background-clip:text;-webkit-background-clip:text;background-size:100% 100%;background-repeat:no-repeat;}',
-    icons_url: 'lib/icons/default/icons.min.js', // [tablet-trim] 离线化：本地图标
-    theme_url: 'lib/themes/silver/theme.min.js', // [tablet-trim] 离线化：本地主题
-    plugin_base_url: 'lib/plugins/', // [tablet-trim] 离线化：本地插件
+    icons_url: 'lib/icons/default/icons.min.js',
+    theme_url: 'lib/themes/silver/theme.min.js',
+    plugin_base_url: 'lib/plugins/',
     plugins: [
       'advlist', 'anchor', 'autolink', 'charmap', 'code',
       'emoticons', 'fullscreen', 'image', 'importcss',
@@ -404,6 +404,12 @@ export function initCKEditor() {
 
       async function _flushContentToDisk() {
         _contentSaveTimer = null;
+        // 画布块拖拽/缩放/旋转期间：getContent 全文序列化代价高（大文档数百毫秒），
+        // 推迟到交互结束后再执行，避免拖拽掉帧
+        if (state.overlayInteracting) {
+          _scheduleContentSave();
+          return;
+        }
         if (!state.tinyEditor) return;
         // 快速笔记走自己的保存路径，不同步 content.html
         if (appState.currentQuickNoteId) return;

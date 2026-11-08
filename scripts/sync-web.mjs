@@ -112,14 +112,22 @@ if (!fs.existsSync(path.join(WWW, 'lib', 'mathlive.min.js'))) {
 // lunar-javascript：桌面 index.html head 走 CDN（web head 无此标签），
 // 缺失时点任务栏时钟 → renderCalendar 逐日调 Solar.fromYmd 抛 TypeError → 日历弹窗打不开
 if (!fs.existsSync(path.join(WWW, 'lib', 'lunar.js'))) {
-  log('下载 lunar-javascript 到 lib/lunar.js …');
-  try {
-    const r = await fetch('https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+  // 优先用桌面已安装的 npm 包（cdn.jsdelivr.net 在部分网络环境完全不通）
+  const localLunar = path.join(DESKTOP, 'node_modules', 'lunar-javascript', 'lunar.js');
+  if (fs.existsSync(localLunar)) {
+    log('拷贝 lunar.js（取自桌面 node_modules）…');
     fs.mkdirSync(path.join(WWW, 'lib'), { recursive: true });
-    fs.writeFileSync(path.join(WWW, 'lib', 'lunar.js'), Buffer.from(await r.arrayBuffer()));
-  } catch (e) {
-    log('⚠ lunar 下载失败（' + e.message + '），日历/农历/纪念日将不可用');
+    fs.copyFileSync(localLunar, path.join(WWW, 'lib', 'lunar.js'));
+  } else {
+    log('下载 lunar-javascript 到 lib/lunar.js …');
+    try {
+      const r = await fetch('https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      fs.mkdirSync(path.join(WWW, 'lib'), { recursive: true });
+      fs.writeFileSync(path.join(WWW, 'lib', 'lunar.js'), Buffer.from(await r.arrayBuffer()));
+    } catch (e) {
+      log('⚠ lunar 下载失败（' + e.message + '），日历/农历/纪念日将不可用');
+    }
   }
 }
 // ---------- 2.5 平板裁剪补丁（桌面源码不动，仅裁剪 www/ 副本） ----------
@@ -699,34 +707,6 @@ const TRIM_PATCHES = [
     desc: '2D/3D 切换按钮启动即纠正文字（静态 HTML 占位是 🌦 天气符号，3D 模式下应为 ⑂ 2D）',
     from: '  appState.show2DView = show2DView;\n  appState.hide2DView = hide2DView;',
     to: '  appState.show2DView = show2DView;\n  appState.hide2DView = hide2DView;\n  updateModeBtnText(); // [tablet-trim] 首次进入即纠正按钮文字（静态 HTML 🌦 为占位符）',
-  },
-  {
-    file: 'modules/richEditor/core/init.js',
-    desc: 'TinyMCE 资源离线化①：语言包/skin/content CSS 指向本地 lib/（原 CDN 断网即初始化失败）',
-    from: [
-      "language_url: 'https://cdn.tiny.cloud/1/gpl/tinymce/7/langs/zh_CN.js',",
-      "    skin_url: 'https://cdn.jsdelivr.net/npm/tinymce@7/skins/ui/oxide-dark',",
-      "    content_css: 'https://cdn.jsdelivr.net/npm/tinymce@7/skins/content/dark/content.min.css',",
-    ].join('\n'),
-    to: [
-      "language_url: 'lib/langs/zh_CN.js', // [tablet-trim] 离线化：本地语言包",
-      "    skin_url: 'lib/skins/ui/oxide-dark', // [tablet-trim] 离线化：本地 skin",
-      "    content_css: 'lib/skins/content/dark/content.min.css', // [tablet-trim] 离线化：本地 content CSS",
-    ].join('\n'),
-  },
-  {
-    file: 'modules/richEditor/core/init.js',
-    desc: 'TinyMCE 资源离线化②：icons/theme/plugins 指向本地 lib/',
-    from: [
-      "icons_url: 'https://cdn.jsdelivr.net/npm/tinymce@7/icons/default/icons.min.js',",
-      "    theme_url: 'https://cdn.jsdelivr.net/npm/tinymce@7/themes/silver/theme.min.js',",
-      "    plugin_base_url: 'https://cdn.jsdelivr.net/npm/tinymce@7/plugins/',",
-    ].join('\n'),
-    to: [
-      "icons_url: 'lib/icons/default/icons.min.js', // [tablet-trim] 离线化：本地图标",
-      "    theme_url: 'lib/themes/silver/theme.min.js', // [tablet-trim] 离线化：本地主题",
-      "    plugin_base_url: 'lib/plugins/', // [tablet-trim] 离线化：本地插件",
-    ].join('\n'),
   },
   {
     file: 'modules/AppLibrary/AppManager.js',

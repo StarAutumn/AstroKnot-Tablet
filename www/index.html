@@ -18,8 +18,8 @@
         "@soundtouchjs/audio-worklet": "./lib/soundtouch-processor.js",
         "@ffmpeg/ffmpeg": "./lib/ffmpeg-wasm/index.js",
         "@ffmpeg/util": "./lib/ffmpeg-util/index.js",
-        "pdfjs-dist": "./lib/pdfjs/pdf.min.mjs",
-        "pdfjs-dist/build/pdf.worker.mjs": "./lib/pdfjs/pdf.worker.min.mjs"
+        "pdfjs-dist": "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs",
+        "pdfjs-dist/build/pdf.worker.mjs": "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs"
       }
     }
     </script>
@@ -1748,12 +1748,14 @@
             <button id="alignTopBtn" style="background:#2c4a6e;font-size:12px;">⬆ 上对齐</button>
             <button id="alignHCenterBtn" style="background:#2c4a6e;font-size:12px;">- 水平居中</button>
             <button id="alignBottomBtn" style="background:#2c4a6e;font-size:12px;">⬇ 下对齐</button>
+            <button id="distributeHBtn" style="background:#2c4a6e;font-size:12px;display:none;">⇹ 等距</button>
         </div>
         <div class="menu-row" id="alignRowVertical" style="display:none;">
             <span style="color:#aaa;font-size:11px;">纵向</span>
             <button id="alignLeftBtn" style="background:#2c5a5e;font-size:12px;">⬅ 左对齐</button>
             <button id="alignVCenterBtn" style="background:#2c5a5e;font-size:12px;">- 垂直居中</button>
             <button id="alignRightBtn" style="background:#2c5a5e;font-size:12px;">➡ 右对齐</button>
+            <button id="distributeVBtn" style="background:#2c5a5e;font-size:12px;display:none;">⇕ 等距</button>
         </div>
         <div class="menu-row" id="groupRow" style="display:none;">
             <button id="groupNodesBtn" style="background:#4a3c7e;font-size:12px;"> 新建群组</button>
